@@ -1,0 +1,183 @@
+/* Wallet Connection Styles for The Nothing App */
+.wallet-container {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: rgba(138, 43, 226, 0.1);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-accent);
+}
+
+.wallet-title {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: var(--color-accent);
+}
+
+.wallet-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.wallet-button {
+  background-color: var(--color-card-background);
+  color: var(--color-text);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--border-radius-sm);
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wallet-button:hover {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+.wallet-button.active {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+.wallet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.9rem;
+}
+
+.wallet-address {
+  word-break: break-all;
+  font-family: monospace;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-sm);
+}
+
+.network-selector {
+  margin-top: 15px;
+}
+
+.network-selector select {
+  width: 100%;
+  padding: 8px;
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-card-background);
+  color: var(--color-text);
+  border: 1px solid var(--color-accent);
+}
+
+.add-to-wallet-btn {
+  display: inline-block;
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.add-to-wallet-btn:hover {
+  background-color: var(--color-accent-dark);
+}
+
+.avascan-links {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avascan-btn {
+  background-color: var(--color-card-background);
+  color: var(--color-text);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--border-radius-sm);
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.avascan-btn:hover {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+/* Custom Network Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+  background-color: var(--color-card-background);
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid var(--color-connection);
+  border-radius: var(--border-radius-md);
+  width: 80%;
+  max-width: 500px;
+}
+
+.close-modal {
+  color: var(--color-text-secondary);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: var(--color-text);
+}
+
+.modal-title {
+  margin-bottom: 15px;
+  color: var(--color-accent);
+}
+
+.modal-form-group {
+  margin-bottom: 15px;
+}
+
+.modal-form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.modal-form-group input {
+  width: 100%;
+  padding: 8px;
+  border-radius: var(--border-radius-sm);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text);
+  border: 1px solid var(--color-connection);
+}
+
+.modal-button {
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.modal-button:hover {
+  background-color: var(--color-accent-dark);
+}

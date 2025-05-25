@@ -1,0 +1,228 @@
+/* Staking Interface Styles */
+.staking-section {
+  margin-top: 30px;
+  background-color: var(--color-card-background);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: var(--color-text);
+  margin-bottom: 10px;
+}
+
+.section-description {
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.staking-stats {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 120px;
+  padding: 15px;
+  background-color: rgba(100, 149, 237, 0.05);
+  border-radius: var(--border-radius-sm);
+  text-align: center;
+  border: 1px solid rgba(100, 149, 237, 0.2);
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.staking-card {
+  margin-bottom: 20px;
+}
+
+.duration-slider-container {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.duration-slider {
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(to right, #6495ED, #4682B4);
+  border-radius: 5px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.duration-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #6495ED;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.duration-slider::-webkit-slider-thumb:hover {
+  background: #4682B4;
+}
+
+.duration-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.staking-summary {
+  background-color: rgba(100, 149, 237, 0.05);
+  border-radius: var(--border-radius-sm);
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(100, 149, 237, 0.2);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.summary-row:last-child {
+  margin-bottom: 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(100, 149, 237, 0.2);
+  font-weight: 600;
+}
+
+.active-stakes-container {
+  margin-top: 15px;
+}
+
+.no-stakes-message {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 20px;
+  font-size: 0.9rem;
+}
+
+.stake-item {
+  border: 1px solid rgba(100, 149, 237, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: rgba(100, 149, 237, 0.05);
+}
+
+.stake-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.stake-amount {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.stake-date {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.stake-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.stake-detail {
+  flex: 1;
+  min-width: 100px;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 3px;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stake-progress {
+  height: 8px;
+  background-color: rgba(100, 149, 237, 0.2);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(to right, #6495ED, #4682B4);
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.stake-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.secondary-btn {
+  background-color: rgba(100, 149, 237, 0.1);
+  color: #6495ED;
+  border: 1px solid #6495ED;
+}
+
+.secondary-btn:hover {
+  background-color: rgba(100, 149, 237, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .staking-stats {
+    flex-direction: column;
+  }
+  
+  .stat-card {
+    width: 100%;
+  }
+  
+  .stake-header {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .stake-details {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .stake-detail {
+    width: 100%;
+  }
+}

@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Nothing App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-background: #15151F;
+      --color-card-background: #1E1E2A;
+      --color-canvas-background: #12121A;
+      --color-text: #FFFFFF;
+      --color-text-secondary: #9B9BAD;
+      --color-accent: #8A2BE2;
+      --color-accent-dark: #5D1D9A;
+      --color-error: #E25C5C;
+      --color-success: #4CAF50;
+      --color-warning: #FFC107;
+      --color-connection: #404052;
+      
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-xxl: 48px;
+      
+      --border-radius-sm: 4px;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      --border-radius-xl: 16px;
+      --border-radius-pill: 9999px;
+      
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+      --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.14);
+      --shadow-glow: 0 0 20px rgba(138, 43, 226, 0.5);
+      
+      --animation-slow: 0.5s;
+      --animation-medium: 0.3s;
+      --animation-fast: 0.15s;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--color-background);
+      color: var(--color-text);
+      overflow-x: hidden;
+    }
+    
+    #app {
+      width: 100%;
+      min-height: 100vh;
+    }
+    
+    /* Auth screens */
+    .auth-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--space-md);
+    }
+    
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: var(--space-xl);
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    .nothing-logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: var(--space-md);
+    }
+    
+    .logo-circle {
+      fill: transparent;
+      stroke: var(--color-accent);
+      stroke-width: 2;
+      stroke-dasharray: 314;
+      stroke-dashoffset: 314;
+      animation: drawCircle 1.5s ease-out forwards, pulse 2s 1.5s infinite alternate;
+    }
+    
+    .logo-plus {
+      stroke: var(--color-accent);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+      animation: drawLines 1.5s ease-out forwards, pulse 2s 1.5s infinite alternate;
+    }
+    
+    .app-title {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-xs);
+      color: var(--color-text);
+      animation: fadeIn 0.5s 0.3s both;
+    }
+    
+    .app-subtitle {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      text-align: center;
+      animation: fadeIn 0.5s 0.5s both;
+    }
+    
+    .auth-form-container {
+      width: 100%;
+      max-width: 400px;
+      animation: slideUp 0.5s 0.7s both;
+    }
+    
+    .auth-form {
+      background-color: var(--color-card-background);
+      padding: var(--space-xl);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .form-title {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-lg);
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: var(--space-md);
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: var(--space-xs);
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: var(--space-md);
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--color-text);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius-md);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color var(--animation-medium);
+      box-sizing: border-box;
+    }
+    
+    .form-input:focus {
+      border-color: var(--color-accent);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: var(--space-md);
+      background-color: var(--color-accent);
+      color: var(--color-text);
+      border: none;
+      border-radius: var(--border-radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--animation-medium);
+      margin-top: var(--space-md);
+    }
+    
+    .btn:hover {
+      background-color: var(--color-accent-dark);
+    }
+    
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--color-accent);
+    }
+    
+    .btn-outline:hover {
+      background-color: rgba(138, 43, 226, 0.1);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: var(--space-lg) 0;
+    }
+    
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .divider-text {
+      padding: 0 var(--space-sm);
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .auth-link-text {
+      text-align: center;
+      margin-top: var(--space-lg);
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+    
+    .auth-link {
+      color: var(--color-accent);
+      font-weight: 500;
+      text-decoration: none;
+      transition: color var(--animation-fast);
+    }
+    
+    .auth-link:hover {
+      color: var(--color-accent-dark);
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      background-color: rgba(226, 92, 92, 0.1);
+      color: var(--color-error);
+      padding: var(--space-md);
+      border-radius: var(--border-radius-md);
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+    
+    /* Dashboard */
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-lg);
+      background-color: var(--color-card-background);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      margin-right: var(--space-sm);
+    }
+    
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-address {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      margin-right: var(--space-md);
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--border-radius-pill);
+    }
+    
+    .sign-out-btn {
+      background-color: transparent;
+      color: var(--color-accent);
+      border: 1px solid var(--color-accent);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--border-radius-md);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--animation-fast);
+    }
+    
+    .sign-out-btn:hover {
+      background-color: rgba(138, 43, 226, 0.1);
+    }
+    
+    .content {
+      display: flex;
+      flex: 1;
+    }
+    
+    .sidebar {
+      width: 200px;
+      background-color: var(--color-card-background);
+      padding: var(--space-lg) 0;
+    }
+    
+    .tab-button {
+      width: 100%;
+      text-align: left;
+      padding: var(--space-md) var(--space-lg);
+      background-color: transparent;
+      color: var(--color-text-secondary);
+      border: none;
+      border-left: 3px solid transparent;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--animation-fast);
+    }
+    
+    .tab-button:hover {
+      color: var(--color-text);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .tab-button.active {
+      color: var(--color-accent);
+      border-left-color: var(--color-accent);
+      background-color: rgba(138, 43, 226, 0.1);
+    }
+    
+    .main-content {
+      flex: 1;
+      padding: var(--space-lg);
+      background-color: var(--color-background);
+    }
+    
+    /* Network visualization */
+    .visualization-container {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-card-background);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      height: 100%;
+    }
+    
+    .visualization-title {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-md);
+    }
+    
+    .visualization-description {
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-lg);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    
+    .canvas {
+      position: relative;
+      flex: 1;
+      background-color: var(--color-canvas-background);
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+      min-height: 400px;
+    }
+    
+    .node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+    }
+    
+    .node-circle {
+      border-radius: 50%;
+      background-color: var(--color-connection);
+    }
+    
+    .node-circle.current-user {
+      background-color: var(--color-accent);
+      box-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+    }
+    
+    .node-pulse {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid var(--color-accent);
+      transform: translate(-50%, -50%);
+      animation: pulse 2s infinite;
+    }
+    
+    .connection {
+      position: absolute;
+      height: 1px;
+      background-color: var(--color-connection);
+      transform-origin: 0 0;
+    }
+    
+    .legend {
+      display: flex;
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+    }
+    
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: var(--space-sm);
+    }
+    
+    .legend-line {
+      width: 20px;
+      height: 2px;
+      background-color: var(--color-connection);
+      margin-right: var(--space-sm);
+    }
+    
+    .legend-text {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+    }
+    
+    /* Token actions */
+    .token-container {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-card-background);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-lg);
+      height: 100%;
+    }
+    
+    .token-info-section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    
+    .token-info-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius-md);
+      padding: var(--space-lg);
+      text-align: center;
+    }
+    
+    .token-info-title {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .token-info-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+    }
+    
+    .actions-section {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+    }
+    
+    .action-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius-md);
+      padding: var(--space-lg);
+      transition: transform var(--animation-medium);
+    }
+    
+    .action-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .action-title {
+      font-size: 1.2rem;
+      margin-bottom: var(--space-md);
+    }
+    
+    .action-description {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .estimated-return {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-md);
+      padding: var(--space-sm);
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius-md);
+      text-align: center;
+    }
+    
+    .success-message {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--color-success);
+      padding: var(--space-md);
+      border-radius: var(--border-radius-md);
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes drawCircle {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    
+    @keyframes drawLines {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.5);
+        opacity: 0.2;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+    }
+    
+    @keyframes glow {
+      0% {
+        box-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.8);
+      }
+      100% {
+        box-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+      }
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="auth-screen" class="auth-container">
+      <div class="logo-container">
+        <svg class="nothing-logo" viewBox="0 0 120 120">
+          <circle class="logo-circle" cx="60" cy="60" r="50"></circle>
+          <path class="logo-plus" d="M40,60 L80,60 M60,40 L60,80"></path>
+        </svg>
+        <h1 class="app-title">The Nothing App</h1>
+        <p class="app-subtitle">Start from nothing, build something together</p>
+      </div>
+
+      <div class="auth-form-container">
+        <div id="signin-form" class="auth-form">
+          <h2 class="form-title">Sign In</h2>
+          <div id="signin-error" class="error-message hidden"></div>
+          
+          <div class="form-group">
+            <label class="form-label" for="signin-email">Email</label>
+            <input class="form-input" type="email" id="signin-email" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signin-password">Password</label>
+            <input class="form-input" type="password" id="signin-password" required>
+          </div>
+
+          <button id="signin-button" class="btn">Sign In</button>
+          
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">or</span>
+            <div class="divider-line"></div>
+          </div>
+          
+          <button id="connect-wallet-button" class="btn btn-outline">Connect Wallet</button>
+          
+          <p class="auth-link-text">
+            Don't have an account? <a href="#" id="show-signup-link" class="auth-link">Sign Up</a>
+          </p>
+        </div>
+
+        <div id="signup-form" class="auth-form hidden">
+          <h2 class="form-title">Sign Up</h2>
+          <div id="signup-error" class="error-message hidden"></div>
+          
+          <div class="form-group">
+            <label class="form-label" for="signup-email">Email</label>
+            <input class="form-input" type="email" id="signup-email" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signup-password">Password</label>
+            <input class="form-input" type="password" id="signup-password" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signup-confirm-password">Confirm Password</label>
+            <input class="form-input" type="password" id="signup-confirm-password" required>
+          </div>
+
+          <button id="signup-button" class="btn">Sign Up</button>
+          
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">or</span>
+            <div class="divider-line"></div>
+          </div>
+          
+          <button id="signup-connect-wallet-button" class="btn btn-outline">Connect Wallet</button>
+          
+          <p class="auth-link-text">
+            Already have an account? <a href="#" id="show-signin-link" class="auth-link">Sign In</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="dashboard-screen" class="dashboard-container hidden">
+      <header class="header">
+        <div class="logo">
+          <svg class="logo-icon" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="15" stroke="#8A2BE2" stroke-width="2" fill="transparent"></circle>
+            <path d="M15,20 L25,20 M20,15 L20,25" stroke="#8A2BE2" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+          <h1 class="logo-text">The Nothing App</h1>
+        </div>
+        <div class="user-info">
+          <span id="user-address" class="user-address">0x1234...5678</span>
+          <button id="sign-out-button" class="sign-out-btn">Sign Out</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="sidebar">
+          <button id="network-tab-button" class="tab-button active">Network</button>
+          <button id="tokens-tab-button" class="tab-button">Tokens</button>
+        </div>
+
+        <div class="main-content">
+          <div id="network-content" class="visualization-container">
+            <h2 class="visualization-title">Network Visualization</h2>
+            <p class="visualization-description">
+              Visualizing the network of users on The Nothing App. Each node represents a user,
+              with connections indicating proximity in the network.
+            </p>
+            
+            <div id="network-canvas" class="canvas">
+              <!-- Nodes and connections will be generated by JavaScript -->
+            </div>
+            
+            <div class="legend">
+              <div class="legend-item">
+                <div class="legend-color" style="background-color: #8A2BE2;"></div>
+                <span class="legend-text">Your Node</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color" style="background-color: #404052;"></div>
+                <span class="legend-text">Other Users</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-line"></div>
+                <span class="legend-text">Connection</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="token-content" class="token-container hidden">
+            <h2 class="visualization-title">$NTH Token Actions</h2>
+            <p class="visualization-description">
+              Manage your Nothing Token ($NTH) on the Avalanche blockchain.
+              Burn tokens to increase their value or sell them for AVAX.
+            </p>
+            
+            <div class="token-info-section">
+              <div class="token-info-card">
+                <h3 class="token-info-title">Your Balance</h3>
+                <div id="token-balance" class="token-info-value">100 $NTH</div>
+              </div>
+              
+              <div class="token-info-card">
+                <h3 class="token-info-title">Current Price</h3>
+                <div id="token-price" class="token-info-value">0.0500 AVAX</div>
+              </div>
+              
+              <div class="token-info-card">
+                <h3 class="token-info-title">Value</h3>
+                <div id="token-value" class="token-info-value">5.0000 AVAX</div>
+              </div>
+            </div>
+            
+            <div id="token-message" class="success-message hidden"></div>
+            <div id="token-error" class="error-message hidden"></div>
+            
+            <div class="actions-section">
+              <div class="action-card">
+                <h3 class="action-title">Burn Tokens</h3>
+                <p class="action-description">
+                  Burn your $NTH tokens to increase the value of remaining tokens.
+                  Burning removes tokens from circulation permanently.
+                </p>
+                
+                <form id="burn-form">
+                  <div class="form-group">
+                    <label class="form-label" for="burn-amount">Amount to Burn</label>
+                    <input class="form-input" type="number" id="burn-amount" placeholder="Enter amount" min="1" max="100">
+                  </div>
+                  
+                  <button id="burn-button" type="submit" class="btn">Burn Tokens</button>
+                </form>
+              </div>
+              
+              <div class="action-card">
+                <h3 class="action-title">Sell Tokens</h3>
+                <p class="action-description">
+                  Sell your $NTH tokens to receive AVAX in return.
+                  Selling tokens will slightly decrease the token price.
+                </p>
+                
+                <form id="sell-form">
+                  <div class="form-group">
+                    <label class="form-label" for="sell-amount">Amount to Sell</label>
+                    <input class="form-input" type="number" id="sell-amount" placeholder="Enter amount" min="1" max="100">
+                  </div>
+                  
+                  <div id="estimated-return" class="estimated-return hidden"></div>
+                  
+                  <button id="sell-button" type="submit" class="btn">Sell Tokens</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // App state
+    const state = {
+      currentUser: null,
+      tokenBalance: 100,
+      tokenPrice: 0.05, // in AVAX
+      nodes: [],
+      connections: [],
+      isLoading: false
+    };
+
+    // DOM elements
+    const authScreen = document.getElementById('auth-screen');
+    const dashboardScreen = document.getElementById('dashboard-screen');
+    const signinForm = document.getElementById('signin-form');
+    const signupForm = document.getElementById('signup-form');
+    const showSignupLink = document.getElementById('show-signup-link');
+    const showSigninLink = document.getElementById('show-signin-link');
+    const signinButton = document.getElementById('signin-button');
+    const signupButton = document.getElementById('signup-button');
+    const connectWalletButton = document.getElementById('connect-wallet-button');
+    const signupConnectWalletButton = document.getElementById('signup-connect-wallet-button');
+    const signOutButton = document.getElementById('sign-out-button');
+    const userAddressElement = document.getElementById('user-address');
+    const networkTabButton = document.getElementById('network-tab-button');
+    const tokensTabButton = document.getElementById('tokens-tab-button');
+    const networkContent = document.getElementById('network-content');
+    const tokenContent = document.getElementById('token-content');
+    const networkCanvas = document.getElementById('network-canvas');
+    const tokenBalanceElement = document.getElementById('token-balance');
+    const tokenPriceElement = document.getElementById('token-price');
+    const tokenValueElement = document.getElementById('token-value');
+    const burnForm = document.getElementById('burn-form');
+    const sellForm = document.getElementById('sell-form');
+    const burnAmountInput = document.getElementById('burn-amount');
+    const sellAmountInput = document.getElementById('sell-amount');
+    const estimatedReturnElement = document.getElementById('estimated-return');
+    const tokenMessageElement = document.getElementById('token-message');
+    const tokenErrorElement = document.getElementById('token-error');
+    const signinErrorElement = document.getElementById('signin-error');
+    const signupErrorElement = document.getElementById('signup-error');
+
+    // Helper functions
+    function showElement(element) {
+      element.classList.remove('hidden');
+    }
+
+    function hideElement(element) {
+      element.classList.add('hidden');
+    }
+
+    function setTokenInfo() {
+      tokenBalanceElement.textContent = `${state.tokenBalance} $NTH`;
+      tokenPriceElement.textContent = `${state.tokenPrice.toFixed(4)} AVAX`;
+      tokenValueElement.textContent = `${(state.tokenBalance * state.tokenPrice).toFixed(4)} AVAX`;
+    }
+
+    function showTokenMessage(message, isError = false) {
+      if (isError) {
+        tokenErrorElement.textContent = message;
+        showElement(tokenErrorElement);
+        hideElement(tokenMessageElement);
+      } else {
+        tokenMessageElement.textContent = message;
+        showElement(tokenMessageElement);
+        hideElement(tokenErrorElement);
+      }
+
+      setTimeout(() => {
+        hideElement(tokenErrorElement);
+        hideElement(tokenMessageElement);
+      }, 5000);
+    }
+
+    function showAuthError(message, isSignup = false) {
+      const errorElement = isSignup ? signupErrorElement : signinErrorElement;
+      errorElement.textContent = message;
+      showElement(errorElement);
+
+      setTimeout(() => {
+        hideElement(errorElement);
+      }, 5000);
+    }
+
+    // Generate a random wallet address
+    function generateRandomAddress() {
+      return `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 6)}`;
+    }
+
+    // Authentication functions
+    function handleSignIn(e) {
+      e.preventDefault();
+      const email = document.getElementById('signin-email').value;
+      const password = document.getElementById('signin-password').value;
+
+      if (!email || !password) {
+        showAuthError('Please enter email and password');
+        return;
+      }
+
+      // Show loading state
+      signinButton.textContent = 'Signing in...';
+      signinButton.disabled = true;
+      state.isLoading = true;
+
+      // Clear previous errors
+      hideElement(signinErrorElement);
+
+      // Simulate authentication (in a real app, this would verify credentials)
+      setTimeout(() => {
+        // Successfully authenticated
+        state.currentUser = {
+          email,
+          address: generateRandomAddress()
+        };
+        
+        userAddressElement.textContent = state.currentUser.address;
+        
+        // Show dashboard
+        hideElement(authScreen);
+        showElement(dashboardScreen);
+        
+        // Initialize network visualization
+        initializeNetwork();
+        
+        // Set token info
+        setTokenInfo();
+        
+        // Reset loading state
+        signinButton.textContent = 'Sign In';
+        signinButton.disabled = false;
+        state.isLoading = false;
+        
+        console.log('User signed in:', state.currentUser);
+      }, 1000);
+    }
+
+    function handleSignUp(e) {
+      e.preventDefault();
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+      if (!email || !password || !confirmPassword) {
+        showAuthError('Please fill all fields', true);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showAuthError('Passwords do not match', true);
+        return;
+      }
+
+      // Clear previous errors
+      hideElement(signupErrorElement);
+
+      // Show loading state
+      signupButton.textContent = 'Creating Account...';
+      signupButton.disabled = true;
+      state.isLoading = true;
+
+      // Simulate account creation (in a real app, this would register the user)
+      setTimeout(() => {
+        // Create user with initial token balance
+        state.currentUser = {
+          email,
+          address: generateRandomAddress(),
+          isNewUser: true
+        };
+        
+        userAddressElement.textContent = state.currentUser.address;
+        
+        // Show dashboard
+        hideElement(authScreen);
+        showElement(dashboardScreen);
+        
+        // Initialize network visualization
+        initializeNetwork();
+        
+        // Set token info
+        setTokenInfo();
+        
+        // Show welcome message for new users
+        if (state.currentUser.isNewUser) {
+          showTokenMessage('Welcome! You\'ve been awarded 100 $NTH tokens to start.');
+        }
+        
+        // Reset loading state
+        signupButton.textContent = 'Sign Up';
+        signupButton.disabled = false;
+        state.isLoading = false;
+        
+        console.log('User registered:', state.currentUser);
+      }, 1000);
+    }
+
+    function handleConnectWallet() {
+      // Show loading state for the appropriate button
+      const button = document.activeElement;
+      const originalText = button.textContent;
+      button.textContent = 'Connecting...';
+      button.disabled = true;
+      state.isLoading = true;
+
+      // Simulate wallet connection (this would connect to Avalanche in a real app)
+      setTimeout(() => {
+        state.currentUser = {
+          address: generateRandomAddress()
+        };
+        
+        userAddressElement.textContent = state.currentUser.address;
+        
+        // Show dashboard
+        hideElement(authScreen);
+        showElement(dashboardScreen);
+        
+        // Initialize network visualization
+        initializeNetwork();
+        
+        // Set token info
+        setTokenInfo();
+        
+        // Reset loading state
+        button.textContent = originalText;
+        button.disabled = false;
+        state.isLoading = false;
+      }, 1000);
+    }
+
+    function handleSignOut() {
+      state.currentUser = null;
+      
+      // Clear inputs
+      document.getElementById('signin-email').value = '';
+      document.getElementById('signin-password').value = '';
+      document.getElementById('signup-email').value = '';
+      document.getElementById('signup-password').value = '';
+      document.getElementById('signup-confirm-password').value = '';
+      
+      // Show auth screen
+      hideElement(dashboardScreen);
+      showElement(authScreen);
+      showElement(signinForm);
+      hideElement(signupForm);
+      
+      // Clear network canvas
+      networkCanvas.innerHTML = '';
+    }
+
+    // Token actions
+    function handleBurnTokens(e) {
+      e.preventDefault();
+      const amount = parseInt(burnAmountInput.value);
+
+      if (!amount || amount <= 0 || amount > state.tokenBalance) {
+        showTokenMessage('Please enter a valid amount to burn', true);
+        return;
+      }
+
+      // Simulate blockchain transaction
+      setTimeout(() => {
+        // Update token state
+        state.tokenBalance -= amount;
+        state.tokenPrice *= 1.05; // Simple price increase simulation
+        
+        // Update UI
+        setTokenInfo();
+        burnAmountInput.value = '';
+        
+        showTokenMessage(`Successfully burned ${amount} $NTH tokens`);
+      }, 2000);
+    }
+
+    function handleSellTokens(e) {
+      e.preventDefault();
+      const amount = parseInt(sellAmountInput.value);
+
+      if (!amount || amount <= 0 || amount > state.tokenBalance) {
+        showTokenMessage('Please enter a valid amount to sell', true);
+        return;
+      }
+
+      // Simulate blockchain transaction
+      setTimeout(() => {
+        const avaxToReceive = amount * state.tokenPrice;
+        
+        // Update token state
+        state.tokenBalance -= amount;
+        state.tokenPrice *= 0.95; // Simple price decrease simulation
+        
+        // Update UI
+        setTokenInfo();
+        sellAmountInput.value = '';
+        hideElement(estimatedReturnElement);
+        
+        showTokenMessage(`Successfully sold ${amount} $NTH tokens for ${avaxToReceive.toFixed(4)} AVAX`);
+      }, 2000);
+    }
+
+    function handleSellAmountChange() {
+      const amount = parseInt(sellAmountInput.value);
+      
+      if (amount && amount > 0 && amount <= state.tokenBalance) {
+        const avaxToReceive = amount * state.tokenPrice;
+        estimatedReturnElement.textContent = `You will receive approximately ${avaxToReceive.toFixed(4)} AVAX`;
+        showElement(estimatedReturnElement);
+      } else {
+        hideElement(estimatedReturnElement);
+      }
+    }
+
+    // Network visualization
+    function generateRandomNodes(count) {
+      const nodes = [];
+      
+      for (let i = 0; i < count; i++) {
+        const x = 40 + Math.random() * (networkCanvas.clientWidth - 80);
+        const y = 40 + Math.random() * (networkCanvas.clientHeight - 80);
+        
+        nodes.push({
+          id: `node-${i}`,
+          x,
+          y,
+          isCurrentUser: false,
+          size: 8 + Math.random() * 4,
+          pulseIntensity: 0.8 + Math.random() * 0.4
+        });
+      }
+      
+      return nodes;
+    }
+
+    function generateUserNode() {
+      // Position the user node roughly in the center
+      const x = networkCanvas.clientWidth / 2 + (Math.random() * 100 - 50);
+      const y = networkCanvas.clientHeight / 2 + (Math.random() * 100 - 50);
+      
+      return {
+        id: 'user-node',
+        x,
+        y,
+        isCurrentUser: true,
+        size: 15,
+        pulseIntensity: 1.5
+      };
+    }
+
+    function calculateConnections(nodes) {
+      const connections = [];
+      const NODE_CONNECTION_DISTANCE = 150;
+      
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const nodeA = nodes[i];
+          const nodeB = nodes[j];
+          
+          const distance = Math.sqrt(
+            Math.pow(nodeA.x - nodeB.x, 2) + 
+            Math.pow(nodeA.y - nodeB.y, 2)
+          );
+          
+          if (distance < NODE_CONNECTION_DISTANCE) {
+            const opacity = 1 - (distance / NODE_CONNECTION_DISTANCE);
+            connections.push({
+              id: `connection-${i}-${j}`,
+              sourceX: nodeA.x,
+              sourceY: nodeA.y,
+              targetX: nodeB.x,
+              targetY: nodeB.y,
+              opacity
+            });
+          }
+        }
+      }
+      
+      return connections;
+    }
+
+    function renderNodes() {
+      // Clear canvas
+      networkCanvas.innerHTML = '';
+      
+      // Draw connections first
+      state.connections.forEach(connection => {
+        const connectionElement = document.createElement('div');
+        connectionElement.className = 'connection';
+        
+        const dx = connection.targetX - connection.sourceX;
+        const dy = connection.targetY - connection.sourceY;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+        
+        connectionElement.style.width = `${length}px`;
+        connectionElement.style.opacity = connection.opacity;
+        connectionElement.style.left = `${connection.sourceX}px`;
+        connectionElement.style.top = `${connection.sourceY}px`;
+        connectionElement.style.transform = `rotate(${angle}deg)`;
+        
+        networkCanvas.appendChild(connectionElement);
+      });
+      
+      // Draw nodes
+      state.nodes.forEach(node => {
+        const nodeContainer = document.createElement('div');
+        nodeContainer.className = 'node';
+        nodeContainer.style.left = `${node.x}px`;
+        nodeContainer.style.top = `${node.y}px`;
+        
+        // For user node, add pulse ring
+        if (node.isCurrentUser) {
+          const pulseRing = document.createElement('div');
+          pulseRing.className = 'node-pulse';
+          pulseRing.style.width = `${node.size * 3}px`;
+          pulseRing.style.height = `${node.size * 3}px`;
+          pulseRing.style.left = '50%';
+          pulseRing.style.top = '50%';
+          nodeContainer.appendChild(pulseRing);
+        }
+        
+        const nodeCircle = document.createElement('div');
+        nodeCircle.className = `node-circle ${node.isCurrentUser ? 'current-user' : ''}`;
+        nodeCircle.style.width = `${node.size}px`;
+        nodeCircle.style.height = `${node.size}px`;
+        nodeCircle.style.animationDuration = `${node.isCurrentUser ? 1.5 : 2 + Math.random() * 2}s`;
+        
+        nodeContainer.appendChild(nodeCircle);
+        networkCanvas.appendChild(nodeContainer);
+      });
+    }
+
+    function initializeNetwork() {
+      // Generate nodes
+      const randomNodes = generateRandomNodes(15);
+      const userNode = generateUserNode();
+      state.nodes = [...randomNodes, userNode];
+      
+      // Calculate connections
+      state.connections = calculateConnections(state.nodes);
+      
+      // Render nodes
+      renderNodes();
+    }
+
+    // Tab switching
+    function switchToNetworkTab() {
+      networkTabButton.classList.add('active');
+      tokensTabButton.classList.remove('active');
+      showElement(networkContent);
+      hideElement(tokenContent);
+    }
+
+    function switchToTokensTab() {
+      tokensTabButton.classList.add('active');
+      networkTabButton.classList.remove('active');
+      hideElement(networkContent);
+      showElement(tokenContent);
+    }
+
+    // Event listeners
+    showSignupLink.addEventListener('click', () => {
+      hideElement(signinForm);
+      showElement(signupForm);
+    });
+
+    showSigninLink.addEventListener('click', () => {
+      hideElement(signupForm);
+      showElement(signinForm);
+    });
+
+    signinButton.addEventListener('click', handleSignIn);
+    signupButton.addEventListener('click', handleSignUp);
+    connectWalletButton.addEventListener('click', handleConnectWallet);
+    signupConnectWalletButton.addEventListener('click', handleConnectWallet);
+    signOutButton.addEventListener('click', handleSignOut);
+
+    networkTabButton.addEventListener('click', switchToNetworkTab);
+    tokensTabButton.addEventListener('click', switchToTokensTab);
+
+    burnForm.addEventListener('submit', handleBurnTokens);
+    sellForm.addEventListener('submit', handleSellTokens);
+    sellAmountInput.addEventListener('input', handleSellAmountChange);
+
+    // Responsive canvas
+    window.addEventListener('resize', () => {
+      if (state.nodes.length > 0) {
+        // Recalculate node positions based on new canvas size
+        state.nodes.forEach(node => {
+          node.x = (node.x / networkCanvas.clientWidth) * networkCanvas.clientWidth;
+          node.y = (node.y / networkCanvas.clientHeight) * networkCanvas.clientHeight;
+        });
+        
+        // Recalculate connections
+        state.connections = calculateConnections(state.nodes);
+        
+        // Re-render
+        renderNodes();
+      }
+    });
+
+    // Initialize with sign-up form visible
+    hideElement(signinForm);
+    showElement(signupForm);
+    hideElement(dashboardScreen);
+  </script>
+</body>
+</html>

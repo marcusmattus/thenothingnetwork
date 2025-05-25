@@ -1,0 +1,4861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Nothing App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0a0a0a;
+      color: #f5f5f5;
+      overflow-x: hidden;
+    }
+    
+    /* Welcome Screen Styles */
+    .welcome-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    
+    .welcome-content {
+      text-align: center;
+      max-width: 600px;
+      padding: 2rem;
+    }
+    
+    .logo-large {
+      margin-bottom: 2rem;
+    }
+    
+    .logo-large h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #888888, #aaaaaa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+    
+    .welcome-description {
+      margin-bottom: 3rem;
+    }
+    
+    .welcome-description p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.6;
+    }
+    
+    .welcome-connect-btn {
+      background: linear-gradient(90deg, #444444, #666666);
+      color: white;
+      font-weight: 600;
+      padding: 1rem 2.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .welcome-connect-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .secondary-btn {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #f5f5f5;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-left: 0.5rem;
+    }
+    
+    .secondary-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal-content {
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      color: #f5f5f5;
+    }
+    
+    .network-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .network-option {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f5f5f5;
+      padding: 0.8rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    
+    .network-option:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+    
+    .modal-close {
+      background-color: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #f5f5f5;
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+    
+    .modal-close:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Node Animation for Welcome Screen */
+    .node-animation-container {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 3rem auto;
+    }
+    
+    .central-node {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: #555555;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 20px rgba(85, 85, 85, 0.5);
+      z-index: 2;
+      animation: pulse 2s infinite;
+    }
+    
+    .orbiting-node {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #777777;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(119, 119, 119, 0.3);
+    }
+    
+    .n1 { animation: orbit 8s linear infinite; }
+    .n2 { animation: orbit 12s linear infinite reverse; animation-delay: -3s; }
+    .n3 { animation: orbit 10s linear infinite; animation-delay: -2s; }
+    .n4 { animation: orbit 14s linear infinite reverse; animation-delay: -5s; }
+    
+    @keyframes orbit {
+      0% { transform: translate(-50%, -50%) rotate(0deg) translateX(80px) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg) translateX(80px) rotate(-360deg); }
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(85, 85, 85, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(85, 85, 85, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(85, 85, 85, 0); }
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      margin-bottom: 2rem;
+    }
+    
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0;
+      background: linear-gradient(90deg, #888888, #aaaaaa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .nav {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .connect-btn {
+      background: linear-gradient(90deg, #444444, #666666);
+      color: white;
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+    
+    .connect-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(100, 100, 100, 0.3);
+    }
+    
+    .wallet-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      position: relative;
+    }
+    
+    .network-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .network-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    
+    .network-connected {
+      background-color: #00c853;
+      box-shadow: 0 0 8px rgba(0, 200, 83, 0.5);
+    }
+    
+    .wallet-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .wallet-address {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #f5f5f5;
+    }
+    
+    .wallet-balance {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .tab {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.6);
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .tab:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .tab.active {
+      color: #0099ff;
+      border-bottom: 2px solid #0099ff;
+    }
+    
+    .tab:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* Network Tab Styles */
+    .network-container {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .network-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .network-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #0099ff, #33ccff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .network-description {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .canvas-container {
+      width: 100%;
+      height: 500px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    
+    #network-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    
+    .network-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f5f5f5;
+    }
+    
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      display: inline-block;
+    }
+    
+    .status-active {
+      background-color: #00c853;
+      box-shadow: 0 0 8px rgba(0, 200, 83, 0.5);
+    }
+    
+    .connect-prompt {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .connect-prompt h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #0099ff, #33ccff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .connect-prompt p {
+      margin-bottom: 1.5rem;
+    }
+    
+    .tooltip {
+      position: absolute;
+      background-color: rgba(20, 20, 20, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 1rem;
+      z-index: 10;
+      max-width: 220px;
+      pointer-events: none;
+      display: none;
+    }
+    
+    /* Exchange Tab Styles */
+    .exchange-container {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .exchange-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .exchange-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #0099ff, #33ccff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .exchange-description {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .exchange-form-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    
+    .exchange-form {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+    
+    .exchange-tabs {
+      display: flex;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .exchange-tab {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.6);
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .exchange-tab:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .exchange-tab.active {
+      color: #0099ff;
+      border-bottom: 2px solid #0099ff;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 0.5rem;
+    }
+    
+    .token-selector {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .token-selector select {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      color: #f5f5f5;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      width: 120px;
+      cursor: pointer;
+    }
+    
+    .token-display {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .token-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #f5f5f5;
+      min-width: 80px;
+    }
+    
+    .input-with-max {
+      display: flex;
+      flex: 1;
+    }
+    
+    .input-with-max input,
+    .token-display input,
+    .token-selector input {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      color: #f5f5f5;
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 100%;
+    }
+    
+    .max-btn {
+      background-color: rgba(0, 153, 255, 0.2);
+      color: #0099ff;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      padding: 0 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .max-btn:hover {
+      background-color: rgba(0, 153, 255, 0.3);
+    }
+    
+    .balance-display {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 0.5rem;
+    }
+    
+    .arrow-down {
+      text-align: center;
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.3);
+      margin: 1rem 0;
+    }
+    
+    .rate-display {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 0.5rem;
+    }
+    
+    .slippage-info,
+    .min-receive-info {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 0.5rem;
+    }
+    
+    .action-button {
+      background: linear-gradient(90deg, #0099ff, #33ccff);
+      color: white;
+      font-weight: 600;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    
+    .action-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 153, 255, 0.3);
+    }
+    
+    .exchange-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .info-card {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    
+    .info-card h3 {
+      font-size: 1.1rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .token-balance-large {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .token-balance-fiat {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+    
+    .transactions-list {
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+    
+    .transaction-type {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    
+    .transaction-buy {
+      color: #00c853;
+    }
+    
+    .transaction-sell {
+      color: #ff3b30;
+    }
+    
+    .transaction-amount {
+      font-size: 0.9rem;
+    }
+    
+    .transaction-time {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .no-transactions {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Burn Tab Styles */
+    .burn-container,
+    .stake-container {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .burn-header,
+    .stake-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .burn-title,
+    .stake-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff3b30, #ff9500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .burn-description,
+    .stake-description {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .burn-form-container,
+    .stake-form-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    
+    .burn-form,
+    .stake-form {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+    
+    .burn-info,
+    .rewards-estimate {
+      background-color: rgba(255, 255, 255, 0.02);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
+    
+    .info-label {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .info-value {
+      font-weight: 600;
+    }
+    
+    .burn-stats,
+    .stake-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .burn-chart-container {
+      display: flex;
+      justify-content: center;
+      padding: 1rem 0;
+    }
+    
+    .burn-chart-placeholder {
+      width: 150px;
+      height: 150px;
+      position: relative;
+    }
+    
+    .burn-chart-circle {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(#ff3b30 0% 3.24%, rgba(255, 59, 48, 0.1) 3.24% 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    
+    .burn-chart-circle::after {
+      content: '';
+      position: absolute;
+      width: 70%;
+      height: 70%;
+      border-radius: 50%;
+      background-color: rgba(20, 20, 20, 0.9);
+    }
+    
+    .burn-percent {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ff3b30;
+      z-index: 1;
+    }
+    
+    .burn-label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+      z-index: 1;
+    }
+    
+    .burn-rank {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .rank-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .rank-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ff3b30;
+    }
+    
+    .burn-progress {
+      margin-top: 0.5rem;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff3b30, #ff9500);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-align: right;
+    }
+    
+    .burns-list {
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    
+    .burn-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .burn-item:last-child {
+      border-bottom: none;
+    }
+    
+    .burn-address {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .burn-amount {
+      font-weight: 600;
+      color: #ff3b30;
+    }
+    
+    .burn-time {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .no-burns {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Staking Styles */
+    .period-selector {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .period-btn {
+      flex: 1;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .period-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .period-btn.active {
+      background-color: rgba(0, 153, 255, 0.2);
+      border-color: rgba(0, 153, 255, 0.3);
+      color: #0099ff;
+    }
+    
+    .apy-display {
+      font-size: 0.9rem;
+      color: #0099ff;
+      margin-top: 0.5rem;
+    }
+    
+    .stakes-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .stake-item {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .stake-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .stake-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    
+    .stake-amount {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    .stake-status {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      background-color: rgba(0, 153, 255, 0.1);
+      color: #0099ff;
+    }
+    
+    .stake-details {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .stake-detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+    
+    .stake-detail-row:last-child {
+      margin-bottom: 0;
+    }
+    
+    .stake-action {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .stake-action-btn {
+      background-color: rgba(0, 153, 255, 0.2);
+      color: #0099ff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .stake-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    
+    .stake-action-btn {
+      flex: 1;
+      border: none;
+      border-radius: 4px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .claim-btn {
+      background-color: #0099ff;
+      color: white;
+    }
+    
+    .unstake-btn {
+      background-color: #444;
+      color: white;
+    }
+    
+    .claim-btn:hover {
+      background-color: #007acc;
+    }
+    
+    .unstake-btn:hover {
+      background-color: #333;
+    }
+    
+    .stake-time-remaining {
+      font-weight: 600;
+    }
+    
+    .no-stakes {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Nothing L1 Network Styles */
+    .l1-network-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    
+    .l1-network-status, .l1-network-explorer {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      margin: 1rem 0;
+    }
+    
+    .status-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #666;
+      margin-right: 8px;
+    }
+    
+    .status-dot.connected {
+      background-color: #4CAF50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.8);
+    }
+    
+    .status-dot.disconnected {
+      background-color: #F44336;
+    }
+    
+    .status-dot.connecting {
+      background-color: #FFC107;
+      animation: pulse 1.5s infinite;
+    }
+    
+    .info-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .validator-status {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 0.5rem;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+    
+    /* Form Selects */
+    select {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      color: #f5f5f5;
+      padding: 0.6rem;
+      font-size: 0.9rem;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    
+    /* Welcome Screen Styles */
+    .welcome-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    .welcome-content {
+      text-align: center;
+      max-width: 500px;
+      padding: 2rem;
+    }
+    
+    .welcome-logo {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #888888, #aaaaaa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .welcome-subtitle {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 2rem;
+    }
+    
+    .welcome-connect-btn {
+      background: linear-gradient(90deg, #444444, #666666);
+      color: white;
+      font-weight: 600;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .welcome-connect-btn i {
+      font-size: 1.2rem;
+    }
+    
+    .welcome-connect-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(100, 100, 100, 0.3);
+    }
+    
+    .nothing-animation {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+    
+    .nothing-node {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background-color: #666666;
+      border-radius: 50%;
+    }
+    
+    .nothing-node.center {
+      width: 24px;
+      height: 24px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #888888;
+      box-shadow: 0 0 16px rgba(136, 136, 136, 0.5);
+    }
+    
+    .nothing-node.top {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .nothing-node.right {
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+    }
+    
+    .nothing-node.bottom {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .nothing-node.left {
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+    
+    .nothing-line {
+      position: absolute;
+      background-color: rgba(136, 136, 136, 0.3);
+    }
+    
+    .nothing-line.horizontal {
+      height: 2px;
+      width: 100%;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+    
+    .nothing-line.vertical {
+      width: 2px;
+      height: 100%;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .pulse {
+      animation: pulse-animation 2s infinite;
+    }
+    
+    @keyframes pulse-animation {
+      0% {
+        box-shadow: 0 0 0 0 rgba(136, 136, 136, 0.5);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(136, 136, 136, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(136, 136, 136, 0);
+      }
+    }
+    
+    /* Notifications */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(0, 0, 0, 0.8);
+      border-left: 4px solid;
+      padding: 1rem;
+      border-radius: 4px;
+      max-width: 300px;
+      z-index: 1000;
+      animation: slideIn 0.3s forwards;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+    
+    .notification-success {
+      border-left-color: #00c853;
+    }
+    
+    .notification-error {
+      border-left-color: #ff3b30;
+    }
+    
+    .notification-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .notification-message {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .network-stats {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .stat-item {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+      }
+      
+      .exchange-form-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Welcome Screen -->
+  <div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-content">
+      <div class="nothing-animation">
+        <div class="nothing-line horizontal"></div>
+        <div class="nothing-line vertical"></div>
+        <div class="nothing-node center pulse"></div>
+        <div class="nothing-node top"></div>
+        <div class="nothing-node right"></div>
+        <div class="nothing-node bottom"></div>
+        <div class="nothing-node left"></div>
+      </div>
+      <div class="welcome-logo"><img src="images/logo.svg" alt="The Nothing App" class="logo-image" style="max-width: 400px;"></div>
+      <div class="welcome-subtitle">Connect your wallet to access the decentralized network on Avalanche C-Chain</div>
+      <button id="welcome-connect-btn" class="welcome-connect-btn">
+        <i class="fas fa-wallet"></i>
+        Connect Wallet
+      </button>
+    </div>
+  </div>
+  
+  <div class="container">
+    <header>
+      <div class="logo">
+        <img src="images/logo.svg" alt="The Nothing App" class="logo-image" style="max-width: 250px;">
+      </div>
+      <div class="nav">
+        <button id="connect-wallet-btn" class="connect-btn">Connect Wallet</button>
+        <div id="wallet-info" class="wallet-info" style="display: none;">
+          <div class="network-info">
+            <span id="network-dot" class="network-dot network-connected"></span>
+            <span id="network-name">Avalanche C-Chain</span>
+            <button id="change-network-btn" class="secondary-btn">Change Network</button>
+          </div>
+          <div class="wallet-btn">
+            <div id="wallet-address" class="wallet-address">0x1234...5678</div>
+            <div id="wallet-balance" class="wallet-balance">0.00 AVAX</div>
+            <button id="sign-out-btn" class="secondary-btn">Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="tabs">
+      <button class="tab active" data-tab="network" id="network-tab-btn">Network</button>
+      <button class="tab" data-tab="exchange" id="exchange-tab-btn" disabled>Exchange</button>
+      <button class="tab" data-tab="burn" id="burn-tab-btn" disabled>Burn</button>
+      <button class="tab" data-tab="stake" id="stake-tab-btn" disabled>Stake</button>
+      <button class="tab" data-tab="l1-network" id="l1-network-tab-btn" disabled>Nothing L1</button>
+    </div>
+    
+    <div id="network-tab" class="network-container">
+      <div class="network-header">
+        <h2 class="network-title">The Nothing Network</h2>
+        <p class="network-description">
+          Visualizing the Avalanche L1 blockchain network.
+          Connect your wallet to join the network and see other users.
+        </p>
+      </div>
+      
+      <div class="canvas-container">
+        <canvas id="network-canvas"></canvas>
+        <div id="connect-prompt" class="connect-prompt">
+          <h3>Join The Network</h3>
+          <p>Connect your wallet to see your node and interact with other users on the Avalanche L1 blockchain.</p>
+          <button id="connect-wallet-prompt-btn" class="connect-btn">Connect Wallet</button>
+        </div>
+        <div id="node-tooltip" class="tooltip"></div>
+      </div>
+      
+      <div class="network-stats">
+        <div class="stat-item">
+          <span class="stat-label">Total Nodes</span>
+          <span id="nodes-count" class="stat-value">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Active Connections</span>
+          <span id="connections-count" class="stat-value">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Network Status</span>
+          <span class="status-indicator status-active"></span>
+          <span class="stat-value">Active</span>
+        </div>
+      </div>
+    </div>
+    
+    <div id="exchange-tab" class="exchange-container" style="display: none;">
+      <div class="exchange-header">
+        <h2 class="exchange-title">Buy $NTH with Crypto</h2>
+        <p class="exchange-description">
+          Purchase $NTH tokens directly with ETH or AVAX. The exchange rate is determined by our liquidity pools,
+          with minimal slippage for small trades.
+        </p>
+      </div>
+      
+      <div class="exchange-form-container">
+        <div class="exchange-form">
+          <div class="exchange-tabs">
+            <button class="exchange-tab active" data-exchange-tab="buy">Buy</button>
+            <button class="exchange-tab" data-exchange-tab="sell">Sell</button>
+          </div>
+          
+          <div id="buy-form" class="form-content">
+            <div class="form-group">
+              <label>Pay with</label>
+              <div class="token-selector">
+                <select id="buy-token-select">
+                  <option value="avax">AVAX</option>
+                  <option value="eth">ETH</option>
+                </select>
+                <div class="input-with-max">
+                  <input type="number" id="buy-amount" placeholder="0.0" step="0.01" min="0.01">
+                  <button id="buy-max-btn" class="max-btn">MAX</button>
+                </div>
+              </div>
+              <div class="balance-display">
+                Balance: <span id="buy-token-balance">0.00</span> <span id="buy-token-symbol">AVAX</span>
+              </div>
+            </div>
+            
+            <div class="arrow-down">↓</div>
+            
+            <div class="form-group">
+              <label>Receive (estimated)</label>
+              <div class="token-display">
+                <span class="token-name">$NTH</span>
+                <input type="text" id="buy-receive-amount" placeholder="0.0" disabled>
+              </div>
+              <div class="rate-display">
+                Rate: 1 <span id="buy-input-symbol">AVAX</span> = <span id="buy-rate">100</span> $NTH
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <div class="slippage-info">
+                Slippage Tolerance: <span id="buy-slippage">0.5</span>%
+              </div>
+              <div class="min-receive-info">
+                Minimum Received: <span id="buy-min-received">0.00</span> $NTH
+              </div>
+            </div>
+            
+            <button id="buy-button" class="action-button">Buy $NTH</button>
+          </div>
+          
+          <div id="sell-form" class="form-content" style="display: none;">
+            <div class="form-group">
+              <label>Sell</label>
+              <div class="token-display">
+                <span class="token-name">$NTH</span>
+                <div class="input-with-max">
+                  <input type="number" id="sell-amount" placeholder="0.0" step="1" min="1">
+                  <button id="sell-max-btn" class="max-btn">MAX</button>
+                </div>
+              </div>
+              <div class="balance-display">
+                Balance: <span id="nth-balance">0.00</span> $NTH
+              </div>
+            </div>
+            
+            <div class="arrow-down">↓</div>
+            
+            <div class="form-group">
+              <label>Receive (estimated)</label>
+              <div class="token-selector">
+                <select id="sell-token-select">
+                  <option value="avax">AVAX</option>
+                  <option value="eth">ETH</option>
+                </select>
+                <input type="text" id="sell-receive-amount" placeholder="0.0" disabled>
+              </div>
+              <div class="rate-display">
+                Rate: 1 $NTH = <span id="sell-rate">0.01</span> <span id="sell-output-symbol">AVAX</span>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <div class="slippage-info">
+                Slippage Tolerance: <span id="sell-slippage">0.5</span>%
+              </div>
+              <div class="min-receive-info">
+                Minimum Received: <span id="sell-min-received">0.00</span> <span id="sell-min-symbol">AVAX</span>
+              </div>
+            </div>
+            
+            <button id="sell-button" class="action-button">Sell $NTH</button>
+          </div>
+        </div>
+        
+        <div class="exchange-info">
+          <div class="info-card">
+            <h3>Your Balance</h3>
+            <div class="token-balance-large">
+              <span id="user-nth-balance">0.00</span> $NTH
+            </div>
+            <div class="token-balance-fiat">
+              ≈ $<span id="nth-balance-usd">0.00</span>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <h3>Exchange Stats</h3>
+            <div class="stat-row">
+              <span class="stat-label">$NTH Price:</span>
+              <span class="stat-value">$<span id="nth-price-usd">0.15</span></span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">24h Volume:</span>
+              <span class="stat-value">$<span id="volume-24h">32,450</span></span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Liquidity:</span>
+              <span class="stat-value">$<span id="total-liquidity">1.2M</span></span>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <h3>Recent Transactions</h3>
+            <div id="recent-transactions" class="transactions-list">
+              <div class="no-transactions">No recent transactions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="burn-tab" class="burn-container" style="display: none;">
+      <div class="burn-header">
+        <h2 class="burn-title">Burn $NTH Tokens</h2>
+        <p class="burn-description">
+          Burn your $NTH tokens to contribute to the network's deflationary mechanism.
+          Burned tokens are permanently removed from circulation, potentially increasing the value of remaining tokens.
+        </p>
+      </div>
+      
+      <div class="burn-form-container">
+        <div class="burn-form">
+          <div class="form-group">
+            <label>Amount to Burn</label>
+            <div class="token-display">
+              <span class="token-name">$NTH</span>
+              <div class="input-with-max">
+                <input type="number" id="burn-amount" placeholder="0.0" step="1" min="1">
+                <button id="burn-max-btn" class="max-btn">MAX</button>
+              </div>
+            </div>
+            <div class="balance-display">
+              Balance: <span id="burn-nth-balance">0.00</span> $NTH
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Burn Reason (Optional)</label>
+            <select id="burn-reason">
+              <option value="deflationary">Contribute to Deflation</option>
+              <option value="permanent">Permanent Removal</option>
+              <option value="challenge">Burning Challenge</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <div class="burn-info">
+              <div class="info-row">
+                <span class="info-label">Network Burned:</span>
+                <span class="info-value"><span id="total-burned">324,156</span> $NTH</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">You've Burned:</span>
+                <span class="info-value"><span id="user-burned">0</span> $NTH</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Burn Impact:</span>
+                <span class="info-value"><span id="burn-impact">Low</span></span>
+              </div>
+            </div>
+          </div>
+          
+          <button id="burn-button" class="action-button">Burn Tokens</button>
+        </div>
+        
+        <div class="burn-stats">
+          <div class="info-card">
+            <h3>Burn Stats</h3>
+            <div class="burn-chart-container">
+              <div class="burn-chart-placeholder">
+                <div class="burn-chart-circle">
+                  <div class="burn-percent"><span id="burn-percent">3.24</span>%</div>
+                  <div class="burn-label">Supply Burned</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <h3>Your Contribution</h3>
+            <div class="burn-rank">
+              <div class="rank-label">Network Rank</div>
+              <div class="rank-value">#<span id="burn-rank">0</span></div>
+            </div>
+            <div class="burn-progress">
+              <div class="progress-bar">
+                <div id="burn-progress-fill" class="progress-fill" style="width: 0%"></div>
+              </div>
+              <div class="progress-label">
+                <span id="burn-progress-percent">0</span>% to next level
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <h3>Recent Burns</h3>
+            <div id="recent-burns" class="burns-list">
+              <div class="no-burns">No recent burns</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="stake-tab" class="stake-container" style="display: none;">
+      <div class="stake-header">
+        <h2 class="stake-title">Stake $NTH Tokens</h2>
+        <p class="stake-description">
+          Stake your $NTH tokens to earn rewards over time. The longer your staking period,
+          the higher your APY. Rewards are automatically compounded.
+        </p>
+      </div>
+      
+      <div class="stake-form-container">
+        <div class="stake-form">
+          <div class="form-group">
+            <label>Amount to Stake</label>
+            <div class="token-display">
+              <span class="token-name">$NTH</span>
+              <div class="input-with-max">
+                <input type="number" id="stake-amount" placeholder="0.0" step="1" min="1">
+                <button id="stake-max-btn" class="max-btn">MAX</button>
+              </div>
+            </div>
+            <div class="balance-display">
+              Balance: <span id="stake-nth-balance">0.00</span> $NTH
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Staking Period</label>
+            <div class="period-selector">
+              <button class="period-btn active" data-period="30">30 Days</button>
+              <button class="period-btn" data-period="90">90 Days</button>
+              <button class="period-btn" data-period="180">180 Days</button>
+              <button class="period-btn" data-period="365">365 Days</button>
+            </div>
+            <div class="apy-display">
+              APY: <span id="stake-apy">12</span>%
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="rewards-estimate">
+              <div class="info-row">
+                <span class="info-label">Estimated Rewards:</span>
+                <span class="info-value"><span id="estimated-rewards">0</span> $NTH</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Total at Maturity:</span>
+                <span class="info-value"><span id="total-at-maturity">0</span> $NTH</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Unlock Date:</span>
+                <span class="info-value"><span id="unlock-date">-</span></span>
+              </div>
+            </div>
+          </div>
+          
+          <button id="stake-button" class="action-button">Stake Tokens</button>
+        </div>
+        
+        <div class="stake-info">
+          <div class="info-card">
+            <h3>Your Stakes</h3>
+            <div id="active-stakes" class="stakes-list">
+              <div class="no-stakes">No active stakes</div>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <h3>Staking Stats</h3>
+            <div class="stat-row">
+              <span class="stat-label">Total Staked:</span>
+              <span class="stat-value"><span id="user-total-staked">0</span> $NTH</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Current Rewards:</span>
+              <span class="stat-value"><span id="user-rewards">0</span> $NTH</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Network Staked:</span>
+              <span class="stat-value"><span id="network-staked">2.3M</span> $NTH</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nothing L1 Network Tab -->
+    <div id="l1-network-tab" class="tab-content" style="display: none;">
+      <h2>Nothing L1 Network</h2>
+      <p class="tab-description">Connect to and manage the Nothing L1 Network - a custom Avalanche subnet dedicated to the Nothing ecosystem.</p>
+      
+      <div class="l1-network-container">
+        <div class="l1-network-status">
+          <div class="status-card">
+            <h3>Network Status</h3>
+            <div class="status-indicator">
+              <span id="l1-status-dot" class="status-dot"></span>
+              <span id="l1-status-text">Not Connected</span>
+            </div>
+            <button id="connect-l1-btn" class="action-button">Connect to Nothing L1</button>
+          </div>
+          
+          <div class="status-card">
+            <h3>Network Stats</h3>
+            <div class="stat-row">
+              <span class="stat-label">Chain ID:</span>
+              <span class="stat-value" id="l1-chain-id">4096 (0x1000)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Block Height:</span>
+              <span class="stat-value" id="l1-block-height">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Validators:</span>
+              <span class="stat-value" id="l1-validators">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">TPS:</span>
+              <span class="stat-value" id="l1-tps">-</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="l1-network-explorer">
+          <div class="info-card">
+            <h3>About Nothing L1</h3>
+            <p>Nothing L1 is a custom Avalanche subnet designed specifically for The Nothing App ecosystem. It provides a dedicated blockchain environment with low fees, high throughput, and native integration with Nothing Tokens.</p>
+            
+            <div class="info-actions">
+              <button id="explore-l1-btn" class="secondary-button">Explore Nothing L1</button>
+              <button id="create-validator-btn" class="secondary-button">Become a Validator</button>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <h3>Your Validator Status</h3>
+            <div id="validator-not-running" class="validator-status">
+              <p>You are not running a validator node on the Nothing L1 Network.</p>
+              <button id="run-validator-btn" class="action-button">Run Validator Node</button>
+            </div>
+            <div id="validator-running" class="validator-status" style="display: none;">
+              <div class="stat-row">
+                <span class="stat-label">Node ID:</span>
+                <span class="stat-value" id="validator-node-id">-</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Uptime:</span>
+                <span class="stat-value" id="validator-uptime">-</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Stake Amount:</span>
+                <span class="stat-value" id="validator-stake">-</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Rewards Earned:</span>
+                <span class="stat-value" id="validator-rewards">-</span>
+              </div>
+              <button id="manage-validator-btn" class="secondary-button">Manage Validator</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Create notification element and function
+    function showNotification(title, message, type = 'success') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      
+      // Set content
+      notification.innerHTML = `
+        <div class="notification-title">${title}</div>
+        <div class="notification-message">${message}</div>
+      `;
+      
+      // Append to body
+      document.body.appendChild(notification);
+      
+      // Remove after 5 seconds
+      setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }, 5000);
+    }
+    
+    // Node Network Visualization
+    class NetworkVisualization {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.nodes = [];
+        this.connections = [];
+        this.particles = [];
+        this.hoveredNode = null;
+        this.selectedNode = null;
+        this.mousePosition = { x: 0, y: 0 };
+        this.userAddress = null;
+        this.isConnected = false;
+        this.animationId = null;
+        this.lastFrameTime = 0;
+        
+        // Set canvas dimensions
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
+        
+        // Mouse interactions
+        this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        this.canvas.addEventListener('click', (e) => this.handleClick(e));
+        
+        // Node tooltip
+        this.tooltip = document.getElementById('node-tooltip');
+        
+        // Stats elements
+        this.nodesCountElement = document.getElementById('nodes-count');
+        this.connectionsCountElement = document.getElementById('connections-count');
+        
+        // Connect prompt
+        this.connectPrompt = document.getElementById('connect-prompt');
+      }
+      
+      resizeCanvas() {
+        const container = this.canvas.parentElement;
+        this.canvas.width = container.clientWidth;
+        this.canvas.height = container.clientHeight;
+        
+        // Reposition nodes if canvas size changes
+        if (this.nodes.length > 0) {
+          this.nodes.forEach(node => {
+            node.x = Math.min(node.x, this.canvas.width - 50);
+            node.y = Math.min(node.y, this.canvas.height - 50);
+          });
+        }
+      }
+      
+      // Set user wallet address and update visualization
+      setUserWallet(address) {
+        this.userAddress = address;
+        this.isConnected = !!address;
+        
+        // Show/hide connect prompt
+        if (this.isConnected) {
+          this.connectPrompt.style.display = 'none';
+          this.generateNodes();
+        } else {
+          this.connectPrompt.style.display = 'block';
+          this.nodes = [];
+          this.connections = [];
+          this.particles = [];
+        }
+        
+        // Update stats
+        this.updateStats();
+      }
+      
+      // Generate nodes for visualization
+      generateNodes() {
+        // Clear existing nodes
+        this.nodes = [];
+        this.connections = [];
+        this.particles = [];
+        
+        // Add user's node if connected
+        if (this.isConnected && this.userAddress) {
+          const position = this.getNodePosition(this.userAddress);
+          
+          const userNode = {
+            id: '0',
+            address: this.userAddress,
+            x: position.x,
+            y: position.y,
+            radius: 20,
+            color: '#0099ff',
+            pulseSpeed: 0.8,
+            pulseIntensity: 0.3,
+            lastActivity: new Date(),
+            tokenBalance: nothingToken.getBalance(this.userAddress) || 0,
+            isUser: true
+          };
+          
+          this.nodes.push(userNode);
+        }
+        
+        // Add other demo nodes
+        const nodeCount = 15;
+        for (let i = 1; i <= nodeCount; i++) {
+          const randomAddress = '0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+          const position = this.getNodePosition(randomAddress);
+          
+          // Random properties
+          const lastActivity = new Date();
+          lastActivity.setDate(lastActivity.getDate() - Math.floor(Math.random() * 30));
+          
+          const node = {
+            id: i.toString(),
+            address: randomAddress,
+            x: position.x,
+            y: position.y,
+            radius: Math.random() * 10 + 10, // 10-20
+            color: i % 5 === 0 ? '#ff3b30' : i % 3 === 0 ? '#33ccff' : '#0099ff',
+            pulseSpeed: Math.random() * 0.5 + 0.5, // 0.5-1.0
+            pulseIntensity: Math.random() * 0.3 + 0.1, // 0.1-0.4
+            lastActivity,
+            tokenBalance: Math.floor(Math.random() * 5000),
+            isUser: false
+          };
+          
+          this.nodes.push(node);
+        }
+        
+        // Create connections between nodes
+        this.nodes.forEach((node, i) => {
+          // Connect with 2-4 random nodes
+          const connectionCount = Math.floor(Math.random() * 3) + 2;
+          
+          for (let j = 0; j < connectionCount; j++) {
+            const targetIndex = Math.floor(Math.random() * this.nodes.length);
+            
+            // Avoid self-connections and duplicate connections
+            if (targetIndex !== i) {
+              const connection = {
+                source: node.id,
+                target: this.nodes[targetIndex].id,
+                strength: Math.random() * 0.7 + 0.3, // 0.3-1.0
+                lastInteraction: new Date(),
+                color: 'rgba(255, 255, 255, 0.3)'
+              };
+              
+              this.connections.push(connection);
+            }
+          }
+        });
+        
+        // Update stats
+        this.updateStats();
+      }
+      
+      // Update network stats
+      updateStats() {
+        this.nodesCountElement.textContent = this.nodes.length;
+        this.connectionsCountElement.textContent = this.connections.length;
+      }
+      
+      // Generate a position based on wallet address (deterministic)
+      getNodePosition(walletAddress) {
+        // Simple hash function for demonstration
+        let hash = 0;
+        for (let i = 0; i < walletAddress.length; i++) {
+          hash = ((hash << 5) - hash) + walletAddress.charCodeAt(i);
+          hash |= 0; // Convert to 32bit integer
+        }
+        
+        // Use the hash to generate x and y coordinates
+        const x = Math.abs(hash % this.canvas.width);
+        const y = Math.abs((hash >> 8) % this.canvas.height);
+        
+        return { x, y };
+      }
+      
+      // Start animation loop
+      start() {
+        if (!this.animationId) {
+          this.animate(performance.now());
+        }
+      }
+      
+      // Stop animation loop
+      stop() {
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+          this.animationId = null;
+        }
+      }
+      
+      // Animation loop
+      animate(timestamp) {
+        // Calculate delta time
+        const deltaTime = this.lastFrameTime ? (timestamp - this.lastFrameTime) / 1000 : 0.016;
+        this.lastFrameTime = timestamp;
+        
+        // Clear canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Draw background gradient
+        const bgGradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+        bgGradient.addColorStop(0, 'rgba(0, 10, 30, 0.2)');
+        bgGradient.addColorStop(1, 'rgba(0, 20, 40, 0.05)');
+        this.ctx.fillStyle = bgGradient;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        if (this.nodes.length === 0) {
+          this.animationId = requestAnimationFrame((t) => this.animate(t));
+          return;
+        }
+        
+        // Draw connections
+        this.connections.forEach(connection => {
+          const sourceNode = this.nodes.find(node => node.id === connection.source);
+          const targetNode = this.nodes.find(node => node.id === connection.target);
+          
+          if (sourceNode && targetNode) {
+            // Draw connection line
+            this.ctx.beginPath();
+            this.ctx.moveTo(sourceNode.x, sourceNode.y);
+            this.ctx.lineTo(targetNode.x, targetNode.y);
+            this.ctx.strokeStyle = connection.color;
+            this.ctx.lineWidth = connection.strength * 2;
+            this.ctx.stroke();
+            
+            // Add particles randomly
+            if (Math.random() < 0.02) {
+              const particleId = `p${Date.now()}-${Math.random()}`;
+              const isSourceToTarget = Math.random() > 0.5;
+              
+              const newParticle = {
+                id: particleId,
+                sourceNode: isSourceToTarget ? connection.source : connection.target,
+                targetNode: isSourceToTarget ? connection.target : connection.source,
+                x: isSourceToTarget ? sourceNode.x : targetNode.x,
+                y: isSourceToTarget ? sourceNode.y : targetNode.y,
+                progress: 0,
+                speed: Math.random() * 0.3 + 0.1, // 0.1-0.4
+                color: sourceNode.color,
+                size: Math.random() * 3 + 2 // 2-5
+              };
+              
+              this.particles.push(newParticle);
+            }
+          }
+        });
+        
+        // Update and draw particles
+        this.particles = this.particles.filter(particle => {
+          const sourceNode = this.nodes.find(node => node.id === particle.sourceNode);
+          const targetNode = this.nodes.find(node => node.id === particle.targetNode);
+          
+          if (!sourceNode || !targetNode) return false;
+          
+          // Update progress
+          particle.progress += particle.speed * deltaTime;
+          
+          if (particle.progress >= 1) {
+            return false; // Remove particle when it reaches the target
+          }
+          
+          // Calculate new position
+          particle.x = sourceNode.x + (targetNode.x - sourceNode.x) * particle.progress;
+          particle.y = sourceNode.y + (targetNode.y - sourceNode.y) * particle.progress;
+          
+          // Draw particle
+          this.ctx.beginPath();
+          this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          this.ctx.fillStyle = particle.color;
+          this.ctx.fill();
+          
+          return true;
+        });
+        
+        // Draw nodes
+        this.nodes.forEach(node => {
+          // Calculate pulse effect
+          const pulseScale = 1 + Math.sin(timestamp * 0.001 * node.pulseSpeed) * node.pulseIntensity;
+          
+          // Draw node outer glow
+          this.ctx.beginPath();
+          this.ctx.arc(node.x, node.y, node.radius * pulseScale * 1.5, 0, Math.PI * 2);
+          const glowGradient = this.ctx.createRadialGradient(
+            node.x, node.y, node.radius * 0.5,
+            node.x, node.y, node.radius * pulseScale * 1.5
+          );
+          glowGradient.addColorStop(0, `${node.color}20`);
+          glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          this.ctx.fillStyle = glowGradient;
+          this.ctx.fill();
+          
+          // Draw node circle
+          this.ctx.beginPath();
+          this.ctx.arc(node.x, node.y, node.radius * pulseScale, 0, Math.PI * 2);
+          
+          // Fill with gradient
+          const gradient = this.ctx.createRadialGradient(
+            node.x, node.y, 0,
+            node.x, node.y, node.radius * pulseScale
+          );
+          
+          if (node.isUser) {
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(0.6, node.color);
+            gradient.addColorStop(1, node.color + '80');
+          } else {
+            gradient.addColorStop(0, node.color);
+            gradient.addColorStop(0.7, node.color + '90');
+            gradient.addColorStop(1, node.color + '30');
+          }
+          
+          this.ctx.fillStyle = gradient;
+          this.ctx.fill();
+          
+          // Highlight border for user's node
+          if (node.isUser) {
+            this.ctx.beginPath();
+            this.ctx.arc(node.x, node.y, node.radius * pulseScale + 3, 0, Math.PI * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
+          }
+          
+          // Highlight hovered/selected node
+          if (node === this.hoveredNode || node === this.selectedNode) {
+            this.ctx.beginPath();
+            this.ctx.arc(node.x, node.y, node.radius * pulseScale + 5, 0, Math.PI * 2);
+            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            this.ctx.lineWidth = 2;
+            this.ctx.setLineDash([5, 3]);
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+          }
+        });
+        
+        // Continue animation loop
+        this.animationId = requestAnimationFrame((t) => this.animate(t));
+      }
+      
+      // Handle mouse move event
+      handleMouseMove(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        
+        this.mousePosition = { x, y };
+        
+        // Check if hovering over a node
+        const hoveredNode = this.nodes.find(node => {
+          const dx = node.x - x;
+          const dy = node.y - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          return distance <= node.radius + 5; // Add some padding for easier hovering
+        });
+        
+        if (hoveredNode !== this.hoveredNode) {
+          this.hoveredNode = hoveredNode;
+          
+          if (hoveredNode) {
+            // Show and update tooltip
+            this.showNodeTooltip(hoveredNode);
+          } else {
+            // Hide tooltip
+            this.tooltip.style.display = 'none';
+          }
+        } else if (hoveredNode) {
+          // Update tooltip position
+          this.updateTooltipPosition();
+        }
+      }
+      
+      // Handle click event
+      handleClick(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        
+        // Check if clicking on a node
+        const clickedNode = this.nodes.find(node => {
+          const dx = node.x - x;
+          const dy = node.y - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          return distance <= node.radius + 5;
+        });
+        
+        this.selectedNode = clickedNode === this.selectedNode ? null : clickedNode;
+      }
+      
+      // Show node tooltip
+      showNodeTooltip(node) {
+        // Format address
+        const shortAddress = `${node.address.substring(0, 8)}...${node.address.substring(node.address.length - 6)}`;
+        
+        // Format time ago
+        const timeAgo = this.getTimeAgo(node.lastActivity);
+        
+        // Set tooltip content
+        this.tooltip.innerHTML = `
+          <div style="margin-bottom: 10px;">
+            <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px; color: rgba(255, 255, 255, 0.7);">Wallet Address:</div>
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.9);">${shortAddress}</div>
+          </div>
+          <div style="margin-bottom: 10px;">
+            <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px; color: rgba(255, 255, 255, 0.7);">Balance:</div>
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.9);">${node.isUser && this.userAddress ? nothingToken.getBalance(this.userAddress).toLocaleString() : node.tokenBalance.toLocaleString()} $NTH</div>
+          </div>
+          <div>
+            <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px; color: rgba(255, 255, 255, 0.7);">Last Activity:</div>
+            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.9);">${timeAgo}</div>
+          </div>
+          ${node.isUser ? '<div style="margin-top: 10px; color: #0099ff; font-weight: bold; font-size: 10px; text-align: right;">YOUR NODE</div>' : ''}
+        `;
+        
+        // Show tooltip
+        this.tooltip.style.display = 'block';
+        
+        // Position tooltip
+        this.updateTooltipPosition();
+      }
+      
+      // Update tooltip position
+      updateTooltipPosition() {
+        const tooltipWidth = 220;
+        const tooltipHeight = 150;
+        
+        // Position tooltip to avoid going off-screen
+        let x = this.mousePosition.x + 10;
+        let y = this.mousePosition.y + 10;
+        
+        // Adjust if tooltip would go off right edge
+        if (x + tooltipWidth > this.canvas.width) {
+          x = this.mousePosition.x - tooltipWidth - 10;
+        }
+        
+        // Adjust if tooltip would go off bottom edge
+        if (y + tooltipHeight > this.canvas.height) {
+          y = this.mousePosition.y - tooltipHeight - 10;
+        }
+        
+        this.tooltip.style.left = `${x}px`;
+        this.tooltip.style.top = `${y}px`;
+      }
+      
+      // Format time ago
+      getTimeAgo(date) {
+        const now = new Date();
+        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+        
+        if (diffInSeconds < 60) {
+          return `${diffInSeconds} seconds ago`;
+        }
+        
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        if (diffInMinutes < 60) {
+          return `${diffInMinutes} minute${diffInMinutes !== 1 ? 's' : ''} ago`;
+        }
+        
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        if (diffInHours < 24) {
+          return `${diffInHours} hour${diffInHours !== 1 ? 's' : ''} ago`;
+        }
+        
+        const diffInDays = Math.floor(diffInHours / 24);
+        return `${diffInDays} day${diffInDays !== 1 ? 's' : ''} ago`;
+      }
+    }
+
+    // Wallet Connection Simulation
+    class WalletConnection {
+      constructor() {
+        this.isConnected = false;
+        this.address = null;
+        this.balance = '0';
+        this.network = null;
+        
+        // Avalanche C-Chain Testnet (Fuji) Configuration
+        this.chainConfig = {
+          testnet: {
+            chainId: '0xa869', // 43113 in hex
+            chainName: 'Avalanche C-Chain Testnet',
+            nativeCurrency: {
+              name: 'Avalanche',
+              symbol: 'AVAX',
+              decimals: 18
+            },
+            rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
+            blockExplorerUrls: ['https://testnet.snowtrace.io/']
+          },
+          mainnet: {
+            chainId: '0xa86a', // 43114 in hex
+            chainName: 'Avalanche C-Chain',
+            nativeCurrency: {
+              name: 'Avalanche',
+              symbol: 'AVAX',
+              decimals: 18
+            },
+            rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+            blockExplorerUrls: ['https://snowtrace.io/']
+          }
+        };
+        
+        // By default use testnet
+        this.currentChain = 'testnet';
+        
+        // UI elements
+        this.connectButton = document.getElementById('connect-wallet-btn');
+        this.connectPromptButton = document.getElementById('connect-wallet-prompt-btn');
+        this.welcomeConnectButton = document.getElementById('welcome-connect-btn');
+        this.welcomeScreen = document.getElementById('welcome-screen');
+        this.walletInfo = document.getElementById('wallet-info');
+        this.networkDot = document.getElementById('network-dot');
+        this.networkName = document.getElementById('network-name');
+        this.walletAddress = document.getElementById('wallet-address');
+        this.walletBalance = document.getElementById('wallet-balance');
+        this.signOutButton = document.getElementById('sign-out-btn');
+        this.changeNetworkButton = document.getElementById('change-network-btn');
+        
+        // Listen for welcome screen connect button click
+        if (this.welcomeConnectButton) {
+          this.welcomeConnectButton.addEventListener('click', () => this.connectWallet());
+        }
+        
+        // Event listeners
+        this.connectButton.addEventListener('click', () => this.connectWallet());
+        this.connectPromptButton.addEventListener('click', () => this.connectWallet());
+        this.signOutButton.addEventListener('click', () => this.disconnectWallet());
+        this.changeNetworkButton.addEventListener('click', () => this.showNetworkOptions());
+        
+        // Tab buttons
+        const tabButtons = document.querySelectorAll('.tab');
+        tabButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            if (button.disabled) return;
+            
+            // Update active tab
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Show corresponding tab content
+            const tabId = button.getAttribute('data-tab');
+            document.querySelectorAll('#network-tab, #exchange-tab, #burn-tab, #stake-tab, #l1-network-tab').forEach(tab => {
+              tab.style.display = 'none';
+            });
+            document.getElementById(tabId + '-tab').style.display = 'block';
+          });
+        });
+      }
+      
+      // Connect wallet
+      async connectWallet() {
+        // Check if window.ethereum exists (MetaMask, etc.)
+        if (typeof window.ethereum !== 'undefined') {
+          try {
+            // Request accounts
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            
+            if (accounts.length > 0) {
+              this.isConnected = true;
+              this.address = accounts[0];
+              
+              // Get network info
+              const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+              this.network = this.getNetworkName(chainId);
+              
+              // Check and switch to Avalanche C-Chain if needed
+              await this.switchToAvalancheNetwork();
+              
+              // Get balance
+              const balance = await window.ethereum.request({
+                method: 'eth_getBalance',
+                params: [accounts[0], 'latest'],
+              });
+              this.balance = parseInt(balance, 16).toString();
+              
+              // Update UI
+              this.updateUI();
+              
+              // Enable tabs
+              this.enableTabs();
+              
+              // Hide welcome screen
+              const welcomeScreen = document.getElementById('welcome-screen');
+              if (welcomeScreen) {
+                welcomeScreen.style.display = 'none';
+              }
+              
+              // Check if this is a new user and distribute 1000 NTH tokens
+              if (nothingToken && !nothingToken.isRegistered(this.address)) {
+                // Register user and give 1000 NTH tokens
+                nothingToken.registerNewUser(this.address);
+                
+                // Show welcome notification
+                showNotification(
+                  'Welcome to The Nothing App!',
+                  'You have received 1000 $NTH tokens to get started.',
+                  'success'
+                );
+              }
+              
+              // Notify network visualization
+              if (networkViz) {
+                networkViz.setUserWallet(this.address);
+              }
+              
+              return true;
+            }
+          } catch (error) {
+            console.error('Error connecting wallet:', error);
+            // Simulate connection for testing
+            this.simulateConnection();
+          }
+        } else {
+          // No wallet detected, simulate for testing
+          this.simulateConnection();
+        }
+      }
+      
+      // Simulate wallet connection (for testing)
+      simulateConnection() {
+        this.isConnected = true;
+        this.address = '0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+        this.network = 'Avalanche C-Chain';
+        this.balance = (Math.random() * 10).toFixed(4);
+        
+        // Update UI
+        this.updateUI();
+        
+        // Enable tabs
+        this.enableTabs();
+        
+        // Notify network visualization
+        if (networkViz) {
+          networkViz.setUserWallet(this.address);
+        }
+      }
+      
+      // Disconnect wallet
+      async disconnectWallet() {
+        this.isConnected = false;
+        this.address = null;
+        this.balance = 0;
+        
+        // Hide wallet info
+        this.walletInfo.style.display = 'none';
+        this.connectButton.style.display = 'block';
+        
+        // Disable tabs
+        this.disableTabs();
+        
+        // Show network tab
+        document.querySelectorAll('#network-tab, #exchange-tab, #burn-tab, #stake-tab').forEach(tab => {
+          tab.style.display = 'none';
+        });
+        document.getElementById('network-tab').style.display = 'block';
+        
+        // Show connect prompt
+        document.getElementById('connect-prompt').style.display = 'flex';
+        
+        // Notify network visualization
+        if (networkViz) {
+          networkViz.setUserWallet(null);
+        }
+        
+        showNotification('Wallet Disconnected', 'You have been signed out successfully.', 'info');
+      }
+      
+      // Show network options
+      showNetworkOptions() {
+        // Create network selection modal
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+          <div class="modal-content">
+            <h3>Select Network</h3>
+            <div class="network-options">
+              <button class="network-option" data-network="mainnet">Avalanche Mainnet</button>
+              <button class="network-option" data-network="testnet">Avalanche Testnet (Fuji)</button>
+              <button class="network-option" data-network="nothing">Nothing L1 Network</button>
+              <button class="network-option" data-network="custom">Other Custom Network</button>
+            </div>
+            <button class="modal-close">Cancel</button>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Add event listeners
+        const closeBtn = modal.querySelector('.modal-close');
+        closeBtn.addEventListener('click', () => {
+          document.body.removeChild(modal);
+        });
+        
+        const networkOptions = modal.querySelectorAll('.network-option');
+        networkOptions.forEach(option => {
+          option.addEventListener('click', async () => {
+            const networkType = option.getAttribute('data-network');
+            await this.switchNetwork(networkType);
+            document.body.removeChild(modal);
+          });
+        });
+      }
+      
+      // Switch network
+      async switchNetwork(networkType) {
+        try {
+          if (networkType === 'mainnet') {
+            this.networkName.textContent = 'Avalanche C-Chain';
+            showNotification('Network Changed', 'Connected to Avalanche Mainnet', 'success');
+          } else if (networkType === 'testnet') {
+            this.networkName.textContent = 'Avalanche Fuji Testnet';
+            showNotification('Network Changed', 'Connected to Avalanche Testnet (Fuji)', 'success');
+          } else if (networkType === 'nothing') {
+            this.networkName.textContent = 'Nothing L1 Network';
+            this.connectToNothingL1();
+            showNotification('Network Changed', 'Connected to Nothing L1 Network', 'success');
+          } else if (networkType === 'custom') {
+            this.networkName.textContent = 'Custom Network';
+            this.showCustomNetworkModal();
+          }
+        } catch (error) {
+          console.error('Error switching network:', error);
+          showNotification('Network Error', 'Failed to switch network. Please try again.', 'error');
+        }
+      }
+      
+      // Connect to Nothing L1 Network
+      async connectToNothingL1() {
+        // Nothing L1 Chain parameters - a custom Avalanche subnet
+        const nothingL1Config = {
+          chainId: '0x1000', // Chain ID 4096
+          chainName: 'Nothing L1 Network',
+          nativeCurrency: {
+            name: 'Nothing Token',
+            symbol: 'NTH',
+            decimals: 18
+          },
+          rpcUrls: ['https://nothing-l1.example.com/rpc'], // Replace with actual RPC when deployed
+          blockExplorerUrls: ['https://explorer.nothing-l1.example.com'], // Replace with actual explorer when deployed
+          iconUrls: ['https://nothing-l1.example.com/logo.png'] // Replace with actual logo when available
+        };
+        
+        if (window.ethereum) {
+          try {
+            // Try to switch to Nothing L1 if it's already added
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: nothingL1Config.chainId }],
+            });
+          } catch (switchError) {
+            // This error code indicates the chain hasn't been added to the wallet
+            if (switchError.code === 4902) {
+              try {
+                // Add Nothing L1 network to the wallet
+                await window.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [nothingL1Config],
+                });
+                showNotification('Network Added', 'Nothing L1 Network has been added to your wallet', 'success');
+              } catch (addError) {
+                console.error('Error adding Nothing L1 network:', addError);
+                showNotification('Network Error', 'Failed to add Nothing L1 Network to your wallet', 'error');
+              }
+            } else {
+              console.error('Error switching to Nothing L1 network:', switchError);
+              showNotification('Network Error', 'Failed to switch to Nothing L1 Network', 'error');
+            }
+          }
+        } else {
+          showNotification('Wallet Error', 'No Ethereum wallet detected', 'error');
+        }
+      }
+      
+      // Update UI with wallet info
+      updateUI() {
+        if (this.isConnected) {
+          // Show wallet info, hide connect button
+          this.connectButton.style.display = 'none';
+          this.walletInfo.style.display = 'block';
+          
+          // Set network info
+          this.networkName.textContent = this.network;
+          
+          // Set wallet address (truncated)
+          const shortAddress = `${this.address.substring(0, 6)}...${this.address.substring(this.address.length - 4)}`;
+          this.walletAddress.textContent = shortAddress;
+          
+          // Set balance
+          const avaxBalance = (parseInt(this.balance) / 1e18).toFixed(4);
+          this.walletBalance.textContent = `${avaxBalance} AVAX`;
+        } else {
+          // Show connect button, hide wallet info
+          this.connectButton.style.display = 'block';
+          this.walletInfo.style.display = 'none';
+        }
+      }
+      
+      // Enable tabs
+      enableTabs() {
+        const tabButtons = document.querySelectorAll('.tab');
+        tabButtons.forEach(button => {
+          button.disabled = false;
+        });
+      }
+      
+      // Get network name from chain ID
+      getNetworkName(chainId) {
+        const networks = {
+          '0x1': 'Ethereum Mainnet',
+          '0xa86a': 'Avalanche C-Chain',
+          '0xa869': 'Avalanche Fuji Testnet'
+        };
+        
+        return networks[chainId] || 'Unknown Network';
+      }
+      
+      // Switch to Avalanche C-Chain Network
+      async switchToAvalancheNetwork() {
+        try {
+          if (!this.isConnected || !window.ethereum) return false;
+          
+          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+          const targetChain = this.chainConfig[this.currentChain];
+          
+          // If not on Avalanche network, switch
+          if (chainId !== targetChain.chainId) {
+            try {
+              // Try to switch to Avalanche
+              await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: targetChain.chainId }]
+              });
+              
+              // Update network name
+              const newChainId = await window.ethereum.request({ method: 'eth_chainId' });
+              this.network = this.getNetworkName(newChainId);
+              this.updateUI();
+              
+              showNotification(
+                'Network Changed',
+                `Switched to ${targetChain.chainName}`,
+                'success'
+              );
+              
+              return true;
+            } catch (switchError) {
+              // This error code indicates that the chain has not been added to MetaMask
+              if (switchError.code === 4902) {
+                try {
+                  await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [
+                      {
+                        chainId: targetChain.chainId,
+                        chainName: targetChain.chainName,
+                        nativeCurrency: targetChain.nativeCurrency,
+                        rpcUrls: targetChain.rpcUrls,
+                        blockExplorerUrls: targetChain.blockExplorerUrls
+                      }
+                    ]
+                  });
+                  
+                  // Try to switch again after adding
+                  await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: targetChain.chainId }]
+                  });
+                  
+                  // Update network name
+                  const newChainId = await window.ethereum.request({ method: 'eth_chainId' });
+                  this.network = this.getNetworkName(newChainId);
+                  this.updateUI();
+                  
+                  showNotification(
+                    'Network Added',
+                    `Added ${targetChain.chainName} to your wallet`,
+                    'success'
+                  );
+                  
+                  return true;
+                } catch (addError) {
+                  console.error('Error adding Avalanche network:', addError);
+                  showNotification(
+                    'Network Error',
+                    'Failed to add Avalanche network to your wallet.',
+                    'error'
+                  );
+                  return false;
+                }
+              } else {
+                console.error('Error switching network:', switchError);
+                return false;
+              }
+            }
+          }
+          
+          return true;
+        } catch (error) {
+          console.error('Error checking network:', error);
+          return false;
+        }
+      }
+    }
+
+    // Initialize Network Visualization
+    const networkViz = new NetworkVisualization('network-canvas');
+    networkViz.start();
+
+    // NothingToken class - represents the $NTH token
+    class NothingToken {
+      constructor() {
+        this.totalSupply = 10000000; // 10 million tokens
+        this.balances = new Map();
+        this.registeredUsers = new Set(); // Track registered users
+        this.price = 0.15; // USD price
+        this.rates = {
+          avax: 150, // 1 AVAX = 150 NTH (updated rate)
+          eth: 1500 // 1 ETH = 1500 NTH (updated rate)
+        };
+        this.history = [];
+        
+        // Set the specified address as the deploying address and holder
+        const deployerAddress = '0xd945c8489801Db8C9E60b9151938a8718d923762';
+        this.balances.set(deployerAddress, 10000000); // Give the entire supply to this address
+        this.registeredUsers.add(deployerAddress); // Mark as registered
+      }
+      
+      // Get token balance for address
+      getBalance(address) {
+        return this.balances.get(address) || 0;
+      }
+      
+      // Set token balance for address
+      setBalance(address, amount) {
+        this.balances.set(address, amount);
+      }
+      
+      // Check if user is registered
+      isRegistered(address) {
+        return this.registeredUsers.has(address);
+      }
+      
+      // Register new user and give 1000 tokens
+      registerNewUser(address, amount = 1000) {
+        if (!this.isRegistered(address)) {
+          this.registeredUsers.add(address);
+          this.setBalance(address, amount);
+          
+          // Record transaction
+          this.history.push({
+            type: 'airdrop',
+            address,
+            amount,
+            timestamp: new Date()
+          });
+          
+          return true;
+        }
+        return false;
+      }
+      
+      // Buy tokens with crypto
+      buyTokens(address, amount, token) {
+        const tokenRate = this.rates[token.toLowerCase()];
+        if (!tokenRate) throw new Error('Unsupported token');
+        
+        const tokensToReceive = amount * tokenRate;
+        const currentBalance = this.getBalance(address) || 0;
+        this.setBalance(address, currentBalance + tokensToReceive);
+        
+        // Record transaction
+        this.history.push({
+          type: 'buy',
+          address,
+          amount: tokensToReceive,
+          token: token.toUpperCase(),
+          tokenAmount: amount,
+          timestamp: new Date()
+        });
+        
+        return tokensToReceive;
+      }
+      
+      // Sell tokens for crypto
+      sellTokens(address, amount, token) {
+        const tokenRate = this.rates[token.toLowerCase()];
+        if (!tokenRate) throw new Error('Unsupported token');
+        
+        const currentBalance = this.getBalance(address) || 0;
+        if (currentBalance < amount) throw new Error('Insufficient balance');
+        
+        const cryptoToReceive = amount / tokenRate;
+        this.setBalance(address, currentBalance - amount);
+        
+        // Record transaction
+        this.history.push({
+          type: 'sell',
+          address,
+          amount: amount,
+          token: token.toUpperCase(),
+          tokenAmount: cryptoToReceive,
+          timestamp: new Date()
+        });
+        
+        return cryptoToReceive;
+      }
+      
+      // Get recent transactions
+      getRecentTransactions(address, limit = 5) {
+        return this.history
+          .filter(tx => tx.address === address)
+          .sort((a, b) => b.timestamp - a.timestamp)
+          .slice(0, limit);
+      }
+      
+      // Get rate for token
+      getRate(token) {
+        return this.rates[token.toLowerCase()] || 0;
+      }
+      
+      // Burn tokens
+      burnTokens(address, amount, reason = 'deflationary') {
+        const currentBalance = this.getBalance(address) || 0;
+        if (currentBalance < amount) throw new Error('Insufficient balance');
+        
+        // Burn tokens (reduce balance)
+        this.setBalance(address, currentBalance - amount);
+        
+        // Record burn transaction
+        const burn = {
+          type: 'burn',
+          address,
+          amount,
+          reason,
+          timestamp: new Date()
+        };
+        
+        this.history.push(burn);
+        
+        return amount;
+      }
+      
+      // Get recent burns
+      getRecentBurns(limit = 5) {
+        return this.history
+          .filter(tx => tx.type === 'burn')
+          .sort((a, b) => b.timestamp - a.timestamp)
+          .slice(0, limit);
+      }
+      
+      // Get user's burned tokens
+      getBurnedTokens(address) {
+        return this.history
+          .filter(tx => tx.type === 'burn' && tx.address === address)
+          .reduce((total, tx) => total + tx.amount, 0);
+      }
+      
+      // Get total burned tokens
+      getTotalBurned() {
+        return this.history
+          .filter(tx => tx.type === 'burn')
+          .reduce((total, tx) => total + tx.amount, 0);
+      }
+      
+      // Create a stake
+      createStake(address, amount, duration) {
+        const currentBalance = this.getBalance(address) || 0;
+        if (currentBalance < amount) throw new Error('Insufficient balance');
+        
+        // Remove tokens from balance
+        this.setBalance(address, currentBalance - amount);
+        
+        // Calculate APY based on duration
+        const apy = this.getApyForDuration(duration);
+        
+        // Calculate end date
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + duration);
+        
+        // Generate stake ID
+        const stakeId = `stake-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Create stake object
+        const stake = {
+          id: stakeId,
+          address,
+          amount,
+          startDate,
+          endDate,
+          duration,
+          apy,
+          rewards: 0,
+          claimed: false,
+          type: 'stake',
+          timestamp: startDate
+        };
+        
+        // Add to history
+        this.history.push(stake);
+        
+        return stake;
+      }
+      
+      // Get user's active stakes
+      getActiveStakes(address) {
+        return this.history
+          .filter(tx => tx.type === 'stake' && tx.address === address && !tx.claimed)
+          .sort((a, b) => b.timestamp - a.timestamp);
+      }
+      
+      // Calculate stake rewards
+      calculateStakeRewards(stake) {
+        if (stake.claimed) return 0;
+        
+        const now = new Date();
+        // If stake is still active, calculate accrued rewards
+        if (now < stake.endDate) {
+          const totalDays = stake.duration;
+          const daysElapsed = Math.floor((now - stake.startDate) / (1000 * 60 * 60 * 24));
+          const progress = Math.min(daysElapsed / totalDays, 1);
+          
+          // Calculate rewards based on simple APY formula
+          return stake.amount * (stake.apy / 100) * progress;
+        }
+        
+        // If stake has matured, return full rewards
+        return stake.amount * (stake.apy / 100);
+      }
+      
+      // Get stake by ID
+      getStakeById(stakeId) {
+        const stake = this.history.find(tx => tx.type === 'stake' && tx.id === stakeId);
+        if (!stake) throw new Error('Stake not found');
+        return stake;
+      }
+      
+      // Unstake tokens (with or without penalty)
+      unstake(stakeId) {
+        const stakeIndex = this.history.findIndex(tx => tx.type === 'stake' && tx.id === stakeId);
+        
+        if (stakeIndex === -1) throw new Error('Stake not found');
+        
+        const stake = this.history[stakeIndex];
+        if (stake.claimed) throw new Error('Stake already claimed');
+        
+        // Calculate rewards
+        const rewards = this.calculateStakeRewards(stake);
+        
+        // Check if early unstaking (apply penalty if needed)
+        const now = new Date();
+        const isEarlyUnstake = now < stake.endDate;
+        let returnAmount = stake.amount;
+        
+        if (isEarlyUnstake) {
+          // Apply 10% penalty for early unstaking
+          returnAmount = Math.floor(stake.amount * 0.9);
+        }
+        
+        // Mark stake as claimed
+        stake.claimed = true;
+        stake.rewards = rewards;
+        stake.unstaked = true;
+        stake.earlyUnstake = isEarlyUnstake;
+        
+        // Return tokens + rewards to user
+        const currentBalance = this.getBalance(stake.address) || 0;
+        this.setBalance(stake.address, currentBalance + returnAmount + rewards);
+        
+        // Add unstake transaction to history
+        this.history.push({
+          type: 'unstake',
+          address: stake.address,
+          stakeId: stake.id,
+          originalAmount: stake.amount,
+          returnedAmount: returnAmount,
+          penaltyApplied: isEarlyUnstake,
+          rewards,
+          timestamp: new Date()
+        });
+        
+        return {
+          amount: returnAmount,
+          originalAmount: stake.amount,
+          rewards,
+          earlyUnstake: isEarlyUnstake
+        };
+      }
+      
+      // Claim stake
+      claimStake(stakeId) {
+        const stakeIndex = this.history.findIndex(tx => tx.type === 'stake' && tx.id === stakeId);
+        
+        if (stakeIndex === -1) throw new Error('Stake not found');
+        
+        const stake = this.history[stakeIndex];
+        if (stake.claimed) throw new Error('Stake already claimed');
+        
+        // Calculate rewards
+        const rewards = this.calculateStakeRewards(stake);
+        
+        // Mark stake as claimed
+        stake.claimed = true;
+        stake.rewards = rewards;
+        
+        // Return tokens + rewards to user
+        const currentBalance = this.getBalance(stake.address) || 0;
+        this.setBalance(stake.address, currentBalance + stake.amount + rewards);
+        
+        // Add claim transaction to history
+        this.history.push({
+          type: 'claim',
+          address: stake.address,
+          stakeId: stake.id,
+          amount: stake.amount,
+          rewards,
+          timestamp: new Date()
+        });
+        
+        return {
+          amount: stake.amount,
+          rewards
+        };
+      }
+      
+      // Get APY for duration
+      getApyForDuration(days) {
+        // Higher APY for longer duration
+        if (days >= 365) return 24; // 24% APY for 1 year+
+        if (days >= 180) return 18; // 18% APY for 6 months+
+        if (days >= 90) return 15;  // 15% APY for 3 months+
+        return 12;                  // 12% APY for 30 days
+      }
+      
+      // Get total staked amount
+      getTotalStaked(address) {
+        return this.getActiveStakes(address)
+          .reduce((total, stake) => total + stake.amount, 0);
+      }
+      
+      // Get total rewards
+      getTotalRewards(address) {
+        return this.getActiveStakes(address)
+          .reduce((total, stake) => total + this.calculateStakeRewards(stake), 0);
+      }
+    }
+
+    // Exchange class - handles buying and selling tokens
+    class TokenExchange {
+      constructor(wallet, token) {
+        this.wallet = wallet;
+        this.token = token;
+        this.slippageTolerance = 0.005; // 0.5%
+        
+        // UI elements
+        this.exchangeTab = document.getElementById('exchange-tab');
+        this.networkTab = document.getElementById('network-tab');
+        
+        // Buy form elements
+        this.buyForm = document.getElementById('buy-form');
+        this.buyTokenSelect = document.getElementById('buy-token-select');
+        this.buyAmount = document.getElementById('buy-amount');
+        this.buyReceiveAmount = document.getElementById('buy-receive-amount');
+        this.buyTokenBalance = document.getElementById('buy-token-balance');
+        this.buyTokenSymbol = document.getElementById('buy-token-symbol');
+        this.buyInputSymbol = document.getElementById('buy-input-symbol');
+        this.buyRate = document.getElementById('buy-rate');
+        this.buyMinReceived = document.getElementById('buy-min-received');
+        this.buyMaxBtn = document.getElementById('buy-max-btn');
+        this.buyButton = document.getElementById('buy-button');
+        
+        // Sell form elements
+        this.sellForm = document.getElementById('sell-form');
+        this.sellAmount = document.getElementById('sell-amount');
+        this.sellReceiveAmount = document.getElementById('sell-receive-amount');
+        this.nthBalance = document.getElementById('nth-balance');
+        this.sellTokenSelect = document.getElementById('sell-token-select');
+        this.sellRate = document.getElementById('sell-rate');
+        this.sellOutputSymbol = document.getElementById('sell-output-symbol');
+        this.sellMinReceived = document.getElementById('sell-min-received');
+        this.sellMinSymbol = document.getElementById('sell-min-symbol');
+        this.sellMaxBtn = document.getElementById('sell-max-btn');
+        this.sellButton = document.getElementById('sell-button');
+        
+        // Info elements
+        this.userNthBalance = document.getElementById('user-nth-balance');
+        this.nthBalanceUsd = document.getElementById('nth-balance-usd');
+        this.nthPriceUsd = document.getElementById('nth-price-usd');
+        this.recentTransactions = document.getElementById('recent-transactions');
+        
+        // Exchange tabs
+        this.exchangeTabs = document.querySelectorAll('.exchange-tab');
+        
+        // Initialize
+        this.init();
+      }
+      
+      // Initialize the exchange
+      init() {
+        // Update token balances
+        this.updateTokenBalances();
+        
+        // Add event listeners for buy form
+        this.buyTokenSelect.addEventListener('change', () => this.updateBuyForm());
+        this.buyAmount.addEventListener('input', () => this.updateBuyForm());
+        this.buyMaxBtn.addEventListener('click', () => this.setMaxBuyAmount());
+        this.buyButton.addEventListener('click', () => this.executeBuy());
+        
+        // Add event listeners for sell form
+        this.sellTokenSelect.addEventListener('change', () => this.updateSellForm());
+        this.sellAmount.addEventListener('input', () => this.updateSellForm());
+        this.sellMaxBtn.addEventListener('click', () => this.setMaxSellAmount());
+        this.sellButton.addEventListener('click', () => this.executeSell());
+        
+        // Add event listeners for exchange tabs
+        this.exchangeTabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            this.exchangeTabs.forEach(t => t.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Show corresponding form
+            const formId = tab.getAttribute('data-exchange-tab');
+            if (formId === 'buy') {
+              this.buyForm.style.display = 'block';
+              this.sellForm.style.display = 'none';
+            } else if (formId === 'sell') {
+              this.buyForm.style.display = 'none';
+              this.sellForm.style.display = 'block';
+            }
+          });
+        });
+        
+        // Add event listeners for tab buttons
+        document.getElementById('network-tab-btn').addEventListener('click', () => {
+          this.showTab('network');
+        });
+        
+        document.getElementById('exchange-tab-btn').addEventListener('click', () => {
+          this.showTab('exchange');
+        });
+        
+        // Initial form updates
+        this.updateBuyForm();
+        this.updateSellForm();
+        this.updateTokenInfo();
+        this.updateTransactionHistory();
+      }
+      
+      // Show a specific tab
+      showTab(tabId) {
+        // Hide all tab contents - including burn and stake tabs
+        this.networkTab.style.display = 'none';
+        this.exchangeTab.style.display = 'none';
+        document.getElementById('burn-tab').style.display = 'none';
+        document.getElementById('stake-tab').style.display = 'none';
+        
+        // Show selected tab content
+        if (tabId === 'network') {
+          this.networkTab.style.display = 'block';
+          document.getElementById('network-tab-btn').classList.add('active');
+          document.getElementById('exchange-tab-btn').classList.remove('active');
+          document.getElementById('burn-tab-btn').classList.remove('active');
+          document.getElementById('stake-tab-btn').classList.remove('active');
+        } else if (tabId === 'exchange') {
+          this.exchangeTab.style.display = 'block';
+          document.getElementById('exchange-tab-btn').classList.add('active');
+          document.getElementById('network-tab-btn').classList.remove('active');
+          document.getElementById('burn-tab-btn').classList.remove('active');
+          document.getElementById('stake-tab-btn').classList.remove('active');
+        }
+      }
+      
+      // Update token balances
+      updateTokenBalances() {
+        if (!this.wallet.isConnected) return;
+        
+        // Get NTH balance
+        const nthBalance = this.token.getBalance(this.wallet.address);
+        this.nthBalance.textContent = nthBalance.toLocaleString();
+        this.userNthBalance.textContent = nthBalance.toLocaleString();
+        
+        // Update USD value
+        const usdValue = (nthBalance * this.token.price).toFixed(2);
+        this.nthBalanceUsd.textContent = usdValue;
+        
+        // Update token price
+        this.nthPriceUsd.textContent = this.token.price.toFixed(2);
+        
+        // Update buy token balance
+        const selectedToken = this.buyTokenSelect.value;
+        const tokenBalance = this.getTokenBalance(selectedToken);
+        this.buyTokenBalance.textContent = tokenBalance.toFixed(4);
+        
+        // Update transaction history
+        this.updateTransactionHistory();
+      }
+      
+      // Get balance for a specific token
+      getTokenBalance(tokenSymbol) {
+        if (!this.wallet.isConnected) return 0;
+        
+        if (tokenSymbol === 'avax') {
+          return parseFloat(this.wallet.balance) / 1e18;
+        } else if (tokenSymbol === 'eth') {
+          // For demo, we'll use a random balance for ETH
+          return Math.random() * 5 + 0.1;
+        }
+        
+        return 0;
+      }
+      
+      // Update buy form calculations
+      updateBuyForm() {
+        if (!this.wallet.isConnected) return;
+        
+        const selectedToken = this.buyTokenSelect.value;
+        const amount = parseFloat(this.buyAmount.value) || 0;
+        
+        // Update symbols
+        this.buyTokenSymbol.textContent = selectedToken.toUpperCase();
+        this.buyInputSymbol.textContent = selectedToken.toUpperCase();
+        
+        // Get token rate
+        const rate = this.token.getRate(selectedToken);
+        this.buyRate.textContent = rate.toLocaleString();
+        
+        // Calculate tokens to receive
+        const tokensToReceive = amount * rate;
+        this.buyReceiveAmount.value = tokensToReceive.toLocaleString();
+        
+        // Calculate minimum received with slippage
+        const minReceived = tokensToReceive * (1 - this.slippageTolerance);
+        this.buyMinReceived.textContent = minReceived.toLocaleString();
+        
+        // Update token balance
+        const tokenBalance = this.getTokenBalance(selectedToken);
+        this.buyTokenBalance.textContent = tokenBalance.toFixed(4);
+      }
+      
+      // Update sell form calculations
+      updateSellForm() {
+        if (!this.wallet.isConnected) return;
+        
+        const selectedToken = this.sellTokenSelect.value;
+        const amount = parseFloat(this.sellAmount.value) || 0;
+        
+        // Update symbols
+        this.sellOutputSymbol.textContent = selectedToken.toUpperCase();
+        this.sellMinSymbol.textContent = selectedToken.toUpperCase();
+        
+        // Get token rate
+        const rate = 1 / this.token.getRate(selectedToken);
+        this.sellRate.textContent = rate.toFixed(5);
+        
+        // Calculate tokens to receive
+        const cryptoToReceive = amount * rate;
+        this.sellReceiveAmount.value = cryptoToReceive.toFixed(6);
+        
+        // Calculate minimum received with slippage
+        const minReceived = cryptoToReceive * (1 - this.slippageTolerance);
+        this.sellMinReceived.textContent = minReceived.toFixed(6);
+      }
+      
+      // Set maximum buy amount
+      setMaxBuyAmount() {
+        if (!this.wallet.isConnected) return;
+        
+        const selectedToken = this.buyTokenSelect.value;
+        const tokenBalance = this.getTokenBalance(selectedToken);
+        
+        // Set max amount (leaving a small amount for gas)
+        const maxAmount = selectedToken === 'avax' 
+          ? Math.max(0, tokenBalance - 0.05) 
+          : tokenBalance;
+        
+        this.buyAmount.value = maxAmount.toFixed(4);
+        this.updateBuyForm();
+      }
+      
+      // Set maximum sell amount
+      setMaxSellAmount() {
+        if (!this.wallet.isConnected) return;
+        
+        const nthBalance = this.token.getBalance(this.wallet.address);
+        this.sellAmount.value = nthBalance;
+        this.updateSellForm();
+      }
+      
+      // Execute buy transaction
+      async executeBuy() {
+        if (!this.wallet.isConnected) {
+          showNotification('Wallet not connected', 'Please connect your wallet to trade', 'error');
+          return;
+        }
+        
+        const selectedToken = this.buyTokenSelect.value;
+        const amount = parseFloat(this.buyAmount.value) || 0;
+        
+        if (amount <= 0) {
+          showNotification('Invalid amount', 'Please enter a valid amount', 'error');
+          return;
+        }
+        
+        const tokenBalance = this.getTokenBalance(selectedToken);
+        if (amount > tokenBalance) {
+          showNotification('Insufficient balance', `Not enough ${selectedToken.toUpperCase()}`, 'error');
+          return;
+        }
+        
+        try {
+          // For simulation purposes, deduct amount from wallet balance if using AVAX
+          if (selectedToken === 'avax' && window.ethereum) {
+            // In a real app, we would use ethereum.request to send a transaction here
+            console.log(`Simulating sending ${amount} AVAX from wallet`);
+          }
+          
+          // Execute buy
+          const tokensReceived = this.token.buyTokens(this.wallet.address, amount, selectedToken);
+          
+          // Show success notification
+          showNotification(
+            'Transaction Successful', 
+            `Bought ${tokensReceived.toLocaleString()} $NTH with ${amount.toFixed(4)} ${selectedToken.toUpperCase()}`,
+            'success'
+          );
+          
+          // Update UI
+          this.buyAmount.value = '';
+          this.updateTokenBalances();
+          this.updateBuyForm();
+          this.updateSellForm();
+          this.updateTokenInfo();
+          this.updateTransactionHistory();
+        } catch (error) {
+          showNotification('Transaction Failed', error.message, 'error');
+        }
+      }
+      
+      // Execute sell transaction
+      async executeSell() {
+        if (!this.wallet.isConnected) {
+          showNotification('Wallet not connected', 'Please connect your wallet to trade', 'error');
+          return;
+        }
+        
+        const selectedToken = this.sellTokenSelect.value;
+        const amount = parseFloat(this.sellAmount.value) || 0;
+        
+        if (amount <= 0) {
+          showNotification('Invalid amount', 'Please enter a valid amount', 'error');
+          return;
+        }
+        
+        const nthBalance = this.token.getBalance(this.wallet.address);
+        if (amount > nthBalance) {
+          showNotification('Insufficient balance', 'Not enough $NTH tokens', 'error');
+          return;
+        }
+        
+        try {
+          // Execute sell
+          const cryptoReceived = this.token.sellTokens(this.wallet.address, amount, selectedToken);
+          
+          // For simulation purposes, add amount to wallet balance if using AVAX
+          if (selectedToken === 'avax' && window.ethereum) {
+            // In a real app, this would be handled by the smart contract transfer
+            console.log(`Simulating receiving ${cryptoReceived} AVAX to wallet`);
+            
+            // Update the token's price slightly (market impact simulation)
+            const currentPrice = this.token.price;
+            // When selling, reduce price by 0.5-2% depending on the size of the sale
+            const priceImpact = Math.min(0.02, amount / 10000); // Max 2% impact
+            this.token.price = currentPrice * (1 - priceImpact);
+          }
+          
+          // Show success notification
+          showNotification(
+            'Transaction Successful', 
+            `Sold ${amount.toLocaleString()} $NTH for ${cryptoReceived.toFixed(6)} ${selectedToken.toUpperCase()}`,
+            'success'
+          );
+          
+          // Update UI
+          this.sellAmount.value = '';
+          this.updateTokenBalances();
+          this.updateBuyForm();
+          this.updateSellForm();
+          this.updateTokenInfo();
+          this.updateTransactionHistory();
+        } catch (error) {
+          showNotification('Transaction Failed', error.message, 'error');
+        }
+      }
+      
+      // Update token info
+      updateTokenInfo() {
+        // Update NTH price
+        this.nthPriceUsd.textContent = this.token.price.toFixed(2);
+        
+        // Update NTH balance and USD value
+        if (this.wallet.isConnected) {
+          const nthBalance = this.token.getBalance(this.wallet.address);
+          this.userNthBalance.textContent = nthBalance.toLocaleString();
+          
+          const usdValue = (nthBalance * this.token.price).toFixed(2);
+          this.nthBalanceUsd.textContent = usdValue;
+        }
+      }
+      
+      // Update transaction history
+      updateTransactionHistory() {
+        if (!this.wallet.isConnected) {
+          this.recentTransactions.innerHTML = '<div class="no-transactions">No recent transactions</div>';
+          return;
+        }
+        
+        const transactions = this.token.getRecentTransactions(this.wallet.address);
+        
+        if (transactions.length === 0) {
+          this.recentTransactions.innerHTML = '<div class="no-transactions">No recent transactions</div>';
+          return;
+        }
+        
+        let html = '';
+        
+        transactions.forEach(tx => {
+          const time = this.formatTime(tx.timestamp);
+          const transactionType = tx.type === 'buy' ? 'Bought' : 'Sold';
+          const transactionClass = tx.type === 'buy' ? 'transaction-buy' : 'transaction-sell';
+          
+          html += `
+            <div class="transaction-item">
+              <div>
+                <div class="transaction-type ${transactionClass}">${transactionType}</div>
+                <div class="transaction-time">${time}</div>
+              </div>
+              <div class="transaction-amount">
+                ${tx.type === 'buy' 
+                  ? `${tx.amount.toLocaleString()} NTH` 
+                  : `${tx.tokenAmount.toFixed(6)} ${tx.token}`
+                }
+              </div>
+            </div>
+          `;
+        });
+        
+        this.recentTransactions.innerHTML = html;
+      }
+      
+      // Format time for display
+      formatTime(date) {
+        const now = new Date();
+        const diff = (now.getTime() - date.getTime()) / 1000; // seconds
+        
+        if (diff < 60) {
+          return 'Just now';
+        } else if (diff < 3600) {
+          const minutes = Math.floor(diff / 60);
+          return `${minutes}m ago`;
+        } else if (diff < 86400) {
+          const hours = Math.floor(diff / 3600);
+          return `${hours}h ago`;
+        } else {
+          const days = Math.floor(diff / 86400);
+          return `${days}d ago`;
+        }
+      }
+    }
+
+    // Burn Manager class
+    class BurnManager {
+      constructor(wallet, token) {
+        this.wallet = wallet;
+        this.token = token;
+        
+        // UI elements
+        this.burnTab = document.getElementById('burn-tab');
+        this.burnAmount = document.getElementById('burn-amount');
+        this.burnNthBalance = document.getElementById('burn-nth-balance');
+        this.burnReason = document.getElementById('burn-reason');
+        this.burnButton = document.getElementById('burn-button');
+        this.totalBurned = document.getElementById('total-burned');
+        this.userBurned = document.getElementById('user-burned');
+        this.burnImpact = document.getElementById('burn-impact');
+        this.burnPercent = document.getElementById('burn-percent');
+        this.burnRank = document.getElementById('burn-rank');
+        this.burnProgressFill = document.getElementById('burn-progress-fill');
+        this.burnProgressPercent = document.getElementById('burn-progress-percent');
+        this.recentBurns = document.getElementById('recent-burns');
+        this.burnMaxBtn = document.getElementById('burn-max-btn');
+        this.burnTabBtn = document.getElementById('burn-tab-btn');
+        
+        // Initialize
+        this.init();
+      }
+      
+      // Initialize the burn manager
+      init() {
+        // Add event listeners
+        this.burnButton.addEventListener('click', () => this.executeBurn());
+        this.burnMaxBtn.addEventListener('click', () => this.setMaxBurnAmount());
+        this.burnTabBtn.addEventListener('click', () => this.showTab());
+        
+        // Update UI
+        this.updateUI();
+      }
+      
+      // Show burn tab
+      showTab() {
+        document.getElementById('network-tab').style.display = 'none';
+        document.getElementById('exchange-tab').style.display = 'none';
+        document.getElementById('stake-tab').style.display = 'none';
+        this.burnTab.style.display = 'block';
+        
+        // Update tab buttons
+        document.getElementById('network-tab-btn').classList.remove('active');
+        document.getElementById('exchange-tab-btn').classList.remove('active');
+        document.getElementById('stake-tab-btn').classList.remove('active');
+        this.burnTabBtn.classList.add('active');
+        
+        // Update UI when showing tab
+        this.updateUI();
+      }
+      
+      // Update UI elements
+      updateUI() {
+        if (!this.wallet.isConnected) return;
+        
+        // Update balance
+        const balance = this.token.getBalance(this.wallet.address);
+        this.burnNthBalance.textContent = balance.toLocaleString();
+        
+        // Update burn statistics
+        const userBurned = this.token.getBurnedTokens(this.wallet.address);
+        const totalBurned = this.token.getTotalBurned();
+        const burnPercent = (totalBurned / this.token.totalSupply) * 100;
+        
+        this.userBurned.textContent = userBurned.toLocaleString();
+        this.totalBurned.textContent = totalBurned.toLocaleString();
+        this.burnPercent.textContent = burnPercent.toFixed(2);
+        
+        // Update burn impact
+        let impact = 'Low';
+        if (userBurned > 10000) impact = 'High';
+        else if (userBurned > 1000) impact = 'Medium';
+        this.burnImpact.textContent = impact;
+        
+        // Update rank (simulated)
+        const rank = userBurned > 0 ? Math.floor(Math.random() * 100) + 1 : 0;
+        this.burnRank.textContent = rank.toString();
+        
+        // Update progress bar
+        const nextLevel = userBurned > 10000 ? 50000 : userBurned > 1000 ? 10000 : 1000;
+        const progress = userBurned > 0 ? (userBurned / nextLevel) * 100 : 0;
+        this.burnProgressFill.style.width = `${Math.min(progress, 100)}%`;
+        this.burnProgressPercent.textContent = Math.min(Math.round(progress), 100);
+        
+        // Update chart gradient
+        const burnChartCircle = document.querySelector('.burn-chart-circle');
+        if (burnChartCircle) {
+          burnChartCircle.style.background = `conic-gradient(#ff3b30 0% ${burnPercent}%, rgba(255, 59, 48, 0.1) ${burnPercent}% 100%)`;
+        }
+        
+        // Update recent burns
+        this.updateRecentBurns();
+      }
+      
+      // Update recent burns list
+      updateRecentBurns() {
+        const recentBurns = this.token.getRecentBurns();
+        
+        if (recentBurns.length === 0) {
+          this.recentBurns.innerHTML = '<div class="no-burns">No recent burns</div>';
+          return;
+        }
+        
+        let html = '';
+        
+        recentBurns.forEach(burn => {
+          const shortAddress = `${burn.address.substring(0, 6)}...${burn.address.substring(burn.address.length - 4)}`;
+          const time = this.formatTime(burn.timestamp);
+          
+          html += `
+            <div class="burn-item">
+              <div>
+                <div class="burn-address">${shortAddress}</div>
+                <div class="burn-time">${time}</div>
+              </div>
+              <div class="burn-amount">
+                ${burn.amount.toLocaleString()} $NTH
+              </div>
+            </div>
+          `;
+        });
+        
+        this.recentBurns.innerHTML = html;
+      }
+      
+      // Set maximum burn amount
+      setMaxBurnAmount() {
+        if (!this.wallet.isConnected) return;
+        
+        const balance = this.token.getBalance(this.wallet.address);
+        this.burnAmount.value = balance;
+      }
+      
+      // Execute burn transaction
+      async executeBurn() {
+        if (!this.wallet.isConnected) {
+          showNotification('Wallet not connected', 'Please connect your wallet to burn tokens', 'error');
+          return;
+        }
+        
+        const amount = parseInt(this.burnAmount.value);
+        const reason = this.burnReason.value;
+        
+        if (!amount || amount <= 0) {
+          showNotification('Invalid amount', 'Please enter a valid amount to burn', 'error');
+          return;
+        }
+        
+        const balance = this.token.getBalance(this.wallet.address);
+        if (amount > balance) {
+          showNotification('Insufficient balance', 'Not enough $NTH tokens to burn', 'error');
+          return;
+        }
+        
+        try {
+          // Execute burn
+          this.token.burnTokens(this.wallet.address, amount, reason);
+          
+          // Show success notification
+          showNotification(
+            'Tokens Burned Successfully', 
+            `${amount.toLocaleString()} $NTH tokens have been permanently removed from circulation`,
+            'success'
+          );
+          
+          // Update UI
+          this.burnAmount.value = '';
+          this.updateUI();
+          
+          // Update exchange balances
+          exchange.updateTokenBalances();
+          
+          // Update stake balances
+          staking.updateUI();
+        } catch (error) {
+          showNotification('Burn Failed', error.message, 'error');
+        }
+      }
+      
+      // Format time for display
+      formatTime(date) {
+        const now = new Date();
+        const diff = (now.getTime() - date.getTime()) / 1000; // seconds
+        
+        if (diff < 60) {
+          return 'Just now';
+        } else if (diff < 3600) {
+          const minutes = Math.floor(diff / 60);
+          return `${minutes}m ago`;
+        } else if (diff < 86400) {
+          const hours = Math.floor(diff / 3600);
+          return `${hours}h ago`;
+        } else {
+          const days = Math.floor(diff / 86400);
+          return `${days}d ago`;
+        }
+      }
+    }
+    
+    // Staking Manager class
+    class StakingManager {
+      constructor(wallet, token) {
+        this.wallet = wallet;
+        this.token = token;
+        this.selectedPeriod = 30; // Default staking period
+        
+        // UI elements
+        this.stakeTab = document.getElementById('stake-tab');
+        this.stakeAmount = document.getElementById('stake-amount');
+        this.stakeNthBalance = document.getElementById('stake-nth-balance');
+        this.periodButtons = document.querySelectorAll('.period-btn');
+        this.stakeApy = document.getElementById('stake-apy');
+        this.estimatedRewards = document.getElementById('estimated-rewards');
+        this.totalAtMaturity = document.getElementById('total-at-maturity');
+        this.unlockDate = document.getElementById('unlock-date');
+        this.stakeButton = document.getElementById('stake-button');
+        this.activeStakes = document.getElementById('active-stakes');
+        this.userTotalStaked = document.getElementById('user-total-staked');
+        this.userRewards = document.getElementById('user-rewards');
+        this.networkStaked = document.getElementById('network-staked');
+        this.stakeMaxBtn = document.getElementById('stake-max-btn');
+        this.stakeTabBtn = document.getElementById('stake-tab-btn');
+        
+        // Initialize
+        this.init();
+      }
+      
+      // Initialize the staking manager
+      init() {
+        // Add event listeners
+        this.stakeButton.addEventListener('click', () => this.executeStake());
+        this.stakeMaxBtn.addEventListener('click', () => this.setMaxStakeAmount());
+        this.stakeTabBtn.addEventListener('click', () => this.showTab());
+        this.stakeAmount.addEventListener('input', () => this.updateEstimates());
+        
+        // Add event listeners for period buttons
+        this.periodButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            this.periodButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Update selected period
+            this.selectedPeriod = parseInt(button.getAttribute('data-period'));
+            
+            // Update APY and estimates
+            this.updateAPY();
+            this.updateEstimates();
+          });
+        });
+        
+        // Update initial APY
+        this.updateAPY();
+        
+        // Update UI
+        this.updateUI();
+      }
+      
+      // Show stake tab
+      showTab() {
+        document.getElementById('network-tab').style.display = 'none';
+        document.getElementById('exchange-tab').style.display = 'none';
+        document.getElementById('burn-tab').style.display = 'none';
+        this.stakeTab.style.display = 'block';
+        
+        // Update tab buttons
+        document.getElementById('network-tab-btn').classList.remove('active');
+        document.getElementById('exchange-tab-btn').classList.remove('active');
+        document.getElementById('burn-tab-btn').classList.remove('active');
+        this.stakeTabBtn.classList.add('active');
+        
+        // Update UI when showing tab
+        this.updateUI();
+      }
+      
+      // Update UI elements
+      updateUI() {
+        if (!this.wallet.isConnected) return;
+        
+        // Update balance
+        const balance = this.token.getBalance(this.wallet.address);
+        this.stakeNthBalance.textContent = balance.toLocaleString();
+        
+        // Update staking statistics
+        const totalStaked = this.token.getTotalStaked(this.wallet.address) || 0;
+        const totalRewards = this.token.getTotalRewards(this.wallet.address) || 0;
+        
+        this.userTotalStaked.textContent = totalStaked.toLocaleString();
+        this.userRewards.textContent = totalRewards.toFixed(2);
+        
+        // Update estimates
+        this.updateEstimates();
+        
+        // Update active stakes
+        this.updateActiveStakes();
+        
+        // Start periodic updates for rewards
+        if (!this.updateInterval) {
+          this.updateInterval = setInterval(() => {
+            this.updateActiveStakes();
+            const rewards = this.token.getTotalRewards(this.wallet.address) || 0;
+            this.userRewards.textContent = rewards.toFixed(2);
+          }, 10000); // Update every 10 seconds
+        }
+      }
+      
+      // Update APY based on selected period
+      updateAPY() {
+        const apy = this.token.getApyForDuration(this.selectedPeriod);
+        this.stakeApy.textContent = apy;
+      }
+      
+      // Update reward estimates
+      updateEstimates() {
+        if (!this.wallet.isConnected) return;
+        
+        const amount = parseInt(this.stakeAmount.value) || 0;
+        const apy = parseInt(this.stakeApy.textContent) || 0;
+        
+        // Calculate estimated rewards
+        const rewards = amount * (apy / 100);
+        this.estimatedRewards.textContent = rewards.toFixed(2);
+        
+        // Calculate total at maturity
+        this.totalAtMaturity.textContent = (amount + rewards).toLocaleString();
+        
+        // Calculate unlock date
+        const unlockDate = new Date();
+        unlockDate.setDate(unlockDate.getDate() + this.selectedPeriod);
+        this.unlockDate.textContent = this.formatDate(unlockDate);
+      }
+      
+      // Update active stakes list
+      updateActiveStakes() {
+        if (!this.wallet.isConnected) return;
+        
+        const activeStakes = this.token.getActiveStakes(this.wallet.address);
+        
+        if (activeStakes.length === 0) {
+          this.activeStakes.innerHTML = '<div class="no-stakes">No active stakes</div>';
+          return;
+        }
+        
+        let html = '';
+        
+        activeStakes.forEach(stake => {
+          const rewards = this.token.calculateStakeRewards(stake);
+          const now = new Date();
+          const timeLeft = Math.max(0, (stake.endDate - now) / (1000 * 60 * 60 * 24));
+          let timeLeftText = '';
+          
+          if (timeLeft === 0) {
+            timeLeftText = 'Ready to claim';
+          } else if (timeLeft < 1) {
+            timeLeftText = `${Math.round(timeLeft * 24)} hours left`;
+          } else {
+            timeLeftText = `${Math.round(timeLeft)} days left`;
+          }
+          
+          html += `
+            <div class="stake-item">
+              <div class="stake-item-header">
+                <div class="stake-amount">${stake.amount.toLocaleString()} $NTH</div>
+                <div class="stake-status">${timeLeft === 0 ? 'Matured' : 'Staking'}</div>
+              </div>
+              <div class="stake-details">
+                <div class="stake-detail-row">
+                  <span>APY:</span>
+                  <span>${stake.apy}%</span>
+                </div>
+                <div class="stake-detail-row">
+                  <span>Current Rewards:</span>
+                  <span>${rewards.toFixed(2)} $NTH</span>
+                </div>
+                <div class="stake-detail-row">
+                  <span>Time Remaining:</span>
+                  <span class="stake-time-remaining">${timeLeftText}</span>
+                </div>
+                <div class="stake-detail-row">
+                  <span>Unlock Date:</span>
+                  <span>${this.formatDate(stake.endDate)}</span>
+                </div>
+              </div>
+              <div class="stake-actions">
+                <button class="stake-action-btn claim-btn" onclick="staking.claimStake('${stake.id}')">Claim Rewards</button>
+                <button class="stake-action-btn unstake-btn" onclick="staking.unstakeTokens('${stake.id}')" ${timeLeft > 0 ? 'title="Early unstaking incurs a 10% penalty"' : ''}>
+                  ${timeLeft > 0 ? 'Unstake Early' : 'Unstake'}
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        
+        this.activeStakes.innerHTML = html;
+      }
+      
+      // Set maximum stake amount
+      setMaxStakeAmount() {
+        if (!this.wallet.isConnected) return;
+        
+        const balance = this.token.getBalance(this.wallet.address);
+        this.stakeAmount.value = balance;
+        this.updateEstimates();
+      }
+      
+      // Execute stake transaction
+      async executeStake() {
+        if (!this.wallet.isConnected) {
+          showNotification('Wallet not connected', 'Please connect your wallet to stake tokens', 'error');
+          return;
+        }
+        
+        const amount = parseInt(this.stakeAmount.value);
+        
+        if (!amount || amount <= 0) {
+          showNotification('Invalid amount', 'Please enter a valid amount to stake', 'error');
+          return;
+        }
+        
+        const balance = this.token.getBalance(this.wallet.address);
+        if (amount > balance) {
+          showNotification('Insufficient balance', 'Not enough $NTH tokens to stake', 'error');
+          return;
+        }
+        
+        try {
+          // Execute stake
+          this.token.createStake(this.wallet.address, amount, this.selectedPeriod);
+          
+          // Show success notification
+          showNotification(
+            'Tokens Staked Successfully', 
+            `${amount.toLocaleString()} $NTH tokens have been staked for ${this.selectedPeriod} days at ${this.stakeApy.textContent}% APY`,
+            'success'
+          );
+          
+          // Update UI
+          this.stakeAmount.value = '';
+          this.updateUI();
+          
+          // Update exchange balances
+          exchange.updateTokenBalances();
+          
+          // Update burn balances
+          burnManager.updateUI();
+        } catch (error) {
+          showNotification('Staking Failed', error.message, 'error');
+        }
+      }
+      
+      // Claim stake
+      async claimStake(stakeId) {
+        if (!this.wallet.isConnected) {
+          showNotification('Wallet not connected', 'Please connect your wallet to claim rewards', 'error');
+          return;
+        }
+        
+        try {
+          // Claim stake
+          const result = this.token.claimStake(stakeId);
+          
+          // Show success notification
+          showNotification(
+            'Rewards Claimed Successfully', 
+            `${result.amount.toLocaleString()} $NTH tokens and ${result.rewards.toFixed(2)} $NTH rewards have been added to your balance`,
+            'success'
+          );
+          
+          // Update UI
+          this.updateUI();
+          
+          // Update exchange balances
+          exchange.updateTokenBalances();
+          
+          // Update burn balances
+          burnManager.updateUI();
+        } catch (error) {
+          showNotification('Claim Failed', error.message, 'error');
+        }
+      }
+      
+      // Unstake tokens
+      async unstakeTokens(stakeId) {
+        if (!this.wallet.isConnected) {
+          showNotification('Wallet not connected', 'Please connect your wallet to unstake tokens', 'error');
+          return;
+        }
+        
+        try {
+          // Get stake info to determine if early unstaking
+          const stake = this.token.getStakeById(stakeId);
+          const currentTime = new Date().getTime();
+          const isEarlyUnstake = currentTime < stake.endDate.getTime();
+          
+          // Show confirmation dialog for early unstake
+          if (isEarlyUnstake) {
+            if (!confirm("You are unstaking early. A 10% penalty will be applied to your initial stake. Continue?")) {
+              return;
+            }
+          }
+          
+          // Execute unstake
+          const result = this.token.unstake(stakeId);
+          
+          // Show success notification
+          let message = '';
+          if (isEarlyUnstake) {
+            message = `${result.amount.toLocaleString()} $NTH tokens returned (10% penalty applied) and ${result.rewards.toFixed(2)} $NTH rewards have been added to your balance`;
+          } else {
+            message = `${result.amount.toLocaleString()} $NTH tokens and ${result.rewards.toFixed(2)} $NTH rewards have been added to your balance`;
+          }
+          
+          showNotification('Unstaked Successfully', message, 'success');
+          
+          // Update UI
+          this.updateUI();
+          
+          // Update exchange balances
+          exchange.updateTokenBalances();
+          
+          // Update burn balances
+          burnManager.updateUI();
+        } catch (error) {
+          showNotification('Unstake Failed', error.message, 'error');
+        }
+      }
+      
+      // Format date for display
+      formatDate(date) {
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      }
+    }
+
+    // Initialize Wallet Connection
+    const wallet = new WalletConnection();
+    
+    // Initialize Nothing Token
+    const nothingToken = new NothingToken();
+    
+    // Initialize Exchange
+    const exchange = new TokenExchange(wallet, nothingToken);
+    
+    // Initialize Burn Manager
+    const burnManager = new BurnManager(wallet, nothingToken);
+    
+    // Initialize Staking Manager
+    const stakingManager = new StakingManager(wallet, nothingToken);
+    
+    // Nothing L1 Network Manager
+    class NothingL1Manager {
+      constructor() {
+        // UI Elements
+        this.l1Tab = document.getElementById('l1-network-tab');
+        this.l1TabBtn = document.getElementById('l1-network-tab-btn');
+        this.statusDot = document.getElementById('l1-status-dot');
+        this.statusText = document.getElementById('l1-status-text');
+        this.connectBtn = document.getElementById('connect-l1-btn');
+        this.exploreBtn = document.getElementById('explore-l1-btn');
+        this.createValidatorBtn = document.getElementById('create-validator-btn');
+        this.runValidatorBtn = document.getElementById('run-validator-btn');
+        this.manageValidatorBtn = document.getElementById('manage-validator-btn');
+        this.validatorNotRunning = document.getElementById('validator-not-running');
+        this.validatorRunning = document.getElementById('validator-running');
+        
+        // Network stats elements
+        this.blockHeight = document.getElementById('l1-block-height');
+        this.validators = document.getElementById('l1-validators');
+        this.tps = document.getElementById('l1-tps');
+        
+        // Validator stats elements
+        this.validatorNodeId = document.getElementById('validator-node-id');
+        this.validatorUptime = document.getElementById('validator-uptime');
+        this.validatorStake = document.getElementById('validator-stake');
+        this.validatorRewards = document.getElementById('validator-rewards');
+        
+        // Network properties
+        this.isConnected = false;
+        this.isValidator = false;
+        this.validatorStartTime = null;
+        this.chainId = '0x1000'; // Chain ID 4096
+        
+        // Sample network data (would be fetched from actual network in production)
+        this.networkData = {
+          blockHeight: 1258794,
+          validators: 21,
+          tps: 654,
+          networkStaked: 15000000
+        };
+        
+        this.wallet = wallet;
+        this.token = nothingToken;
+        this.updateInterval = null;
+      }
+      
+      // Initialize the L1 manager
+      init() {
+        // Add event listeners
+        this.connectBtn.addEventListener('click', () => this.connectToL1Network());
+        this.exploreBtn.addEventListener('click', () => this.exploreL1Network());
+        this.createValidatorBtn.addEventListener('click', () => this.createValidator());
+        this.runValidatorBtn.addEventListener('click', () => this.runValidator());
+        this.manageValidatorBtn.addEventListener('click', () => this.manageValidator());
+        
+        // Enable L1 tab when wallet is connected
+        if (this.wallet.isConnected) {
+          this.l1TabBtn.disabled = false;
+        }
+        
+        // Make sure we start as not connected
+        this.isConnected = false;
+        
+        // Update UI
+        this.updateNetworkInfo();
+        
+        // Stop any existing update interval
+        if (this.updateInterval) {
+          clearInterval(this.updateInterval);
+          this.updateInterval = null;
+        }
+      }
+      
+      // Update network info
+      updateNetworkInfo() {
+        if (this.isConnected) {
+          // Update status indicators
+          this.statusDot.className = 'status-dot connected';
+          this.statusText.textContent = 'Connected to Nothing L1';
+          this.connectBtn.textContent = 'Disconnect';
+          
+          // Update network stats
+          this.blockHeight.textContent = this.networkData.blockHeight.toLocaleString();
+          this.validators.textContent = this.networkData.validators;
+          this.tps.textContent = this.networkData.tps;
+          
+          // Show validator stats if user is a validator
+          if (this.isValidator) {
+            this.validatorNotRunning.style.display = 'none';
+            this.validatorRunning.style.display = 'block';
+            
+            // Calculate uptime
+            const uptimeMs = this.validatorStartTime ? Date.now() - this.validatorStartTime : 0;
+            const hours = Math.floor(uptimeMs / (1000 * 60 * 60));
+            const days = Math.floor(hours / 24);
+            const uptime = days > 0 ? `${days}d ${hours % 24}h` : `${hours}h ${Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60))}m`;
+            
+            // Update validator stats
+            this.validatorNodeId.textContent = `NodeID-${this.wallet.address.substring(2, 10)}`;
+            this.validatorUptime.textContent = uptime;
+            this.validatorStake.textContent = '50,000 NTH';
+            this.validatorRewards.textContent = '1,254.32 NTH';
+          } else {
+            this.validatorNotRunning.style.display = 'block';
+            this.validatorRunning.style.display = 'none';
+          }
+          
+          // Update network data periodically (simulating blockchain updates)
+          this.simulateNetworkUpdates();
+        } else {
+          // Update status indicators for disconnected state
+          this.statusDot.className = 'status-dot disconnected';
+          this.statusText.textContent = 'Not Connected';
+          this.connectBtn.textContent = 'Connect to Nothing L1';
+          
+          // Reset network stats
+          this.blockHeight.textContent = '-';
+          this.validators.textContent = '-';
+          this.tps.textContent = '-';
+          
+          // Hide validator stats
+          this.validatorNotRunning.style.display = 'block';
+          this.validatorRunning.style.display = 'none';
+        }
+      }
+      
+      // Connect to Nothing L1 Network
+      async connectToL1Network() {
+        // Simplified check that doesn't rely on wallet.isConnected
+        if (!window.ethereum) {
+          showNotification('Wallet Required', 'Please connect your wallet first to access Nothing L1', 'error');
+          return;
+        }
+        
+        if (this.isConnected) {
+          // Disconnect logic
+          this.isConnected = false;
+          showNotification('Disconnected', 'Disconnected from Nothing L1 Network', 'info');
+          this.updateNetworkInfo();
+          return;
+        }
+        
+        // Update status to connecting
+        this.statusDot.className = 'status-dot connecting';
+        this.statusText.textContent = 'Connecting...';
+        
+        try {
+          // Nothing L1 Chain parameters - a custom Avalanche subnet
+          // Following Avalanche's L1 creation guidelines
+          const nothingL1Config = {
+            chainId: this.chainId,
+            chainName: 'Nothing L1 Network',
+            nativeCurrency: {
+              name: 'Nothing Token',
+              symbol: 'NTH',
+              decimals: 18
+            },
+            rpcUrls: ['https://subnets-test.avax.network/nothing-l1/rpc'], // Simulated RPC endpoint
+            blockExplorerUrls: ['https://subnets-test.avax.network/nothing-l1'], // Simulated explorer
+            iconUrls: ['images/logo.svg'] // Use existing logo
+          };
+          
+          if (window.ethereum) {
+            try {
+              // Try to switch to Nothing L1 if it's already added
+              await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: this.chainId }],
+              });
+              
+              // Connection successful
+              this.isConnected = true;
+              showNotification('Connected', 'Successfully connected to Nothing L1 Network', 'success');
+              
+              // Update UI
+              this.updateNetworkInfo();
+              
+              // Simulate blockchain activity by starting updates
+              this.simulateNetworkUpdates();
+            } catch (switchError) {
+              // This error code indicates the chain hasn't been added to the wallet
+              if (switchError.code === 4902) {
+                try {
+                  // Add Nothing L1 network to the wallet
+                  await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [nothingL1Config],
+                  });
+                  
+                  // Connection successful
+                  this.isConnected = true;
+                  showNotification('Network Added', 'Nothing L1 Network has been added to your wallet', 'success');
+                  
+                  // Update UI
+                  this.updateNetworkInfo();
+                  
+                  // Fetch initial genesis file info (simulation)
+                  this.fetchGenesisInfo();
+                } catch (addError) {
+                  console.error('Error adding Nothing L1 network:', addError);
+                  showNotification('Network Error', 'Failed to add Nothing L1 Network to your wallet', 'error');
+                  
+                  // Reset connection status
+                  this.isConnected = false;
+                  this.updateNetworkInfo();
+                }
+              } else {
+                console.error('Error switching to Nothing L1 network:', switchError);
+                showNotification('Network Error', 'Failed to switch to Nothing L1 Network', 'error');
+                
+                // Reset connection status
+                this.isConnected = false;
+                this.updateNetworkInfo();
+              }
+            }
+          } else {
+            showNotification('Wallet Error', 'No Ethereum wallet detected', 'error');
+            
+            // Reset connection status
+            this.isConnected = false;
+            this.updateNetworkInfo();
+          }
+        } catch (error) {
+          console.error('Connection error:', error);
+          showNotification('Connection Failed', 'Could not connect to Nothing L1 Network', 'error');
+          
+          // Reset connection status
+          this.isConnected = false;
+          this.updateNetworkInfo();
+        }
+      }
+      
+      // Fetch Genesis information following Avalanche L1 guidelines
+      async fetchGenesisInfo() {
+        // In a real implementation, this would fetch the actual genesis file
+        // For the demo, we'll simulate the genesis parameters based on Avalanche L1 docs
+        
+        const genesisParams = {
+          networkID: 1000,
+          allocations: [
+            {
+              ethAddr: this.wallet.address,
+              avaxAddr: "X-" + this.wallet.address.substring(2, 22),
+              initialAmount: 10000000000000000, // 10 million NTH
+              unlockSchedule: [
+                {
+                  amount: 10000000000000000,
+                  locktime: 1609459200
+                }
+              ]
+            }
+          ],
+          startTime: Math.floor(Date.now() / 1000) - 86400, // Started 1 day ago
+          initialStakeDuration: 31536000, // 1 year in seconds
+          initialStakeDurationOffset: 5400, // 90 minutes
+          initialStakeAmount: 2000000000000, // 2,000 NTH
+          minStake: 1000000000000, // 1,000 NTH
+          maxStakeDuration: 31536000, // 1 year in seconds
+          minStakeDuration: 86400, // 1 day in seconds
+          maxConsumption: 120000, // Maximum consumption rate for resources
+          minConsumption: 100000, // Minimum consumption rate for resources
+          maxValidatorStake: 3000000000000000, // 3 million NTH
+          minValidatorStake: 2000000000000, // 2,000 NTH
+          minDelegatorStake: 1000000000000, // 1,000 NTH
+          minDelegationFee: 20000, // 2%
+          maxValidatorCount: 128,
+          snowmanCommitThreshold: 15
+        };
+        
+        console.log('Nothing L1 Genesis parameters:', genesisParams);
+        
+        // In a real implementation, we would parse this information and use it
+        // For the demo, we'll just update the UI with some of these values
+        this.networkData.maxValidators = genesisParams.maxValidatorCount;
+        this.networkData.minStake = 2000; // 2,000 NTH
+        this.networkData.startTime = new Date(genesisParams.startTime * 1000);
+        
+        // Show a notification that genesis file is loaded
+        showNotification('Genesis Loaded', 'Nothing L1 Network genesis parameters loaded successfully', 'success');
+      }
+      
+      // Explore L1 Network in explorer
+      exploreL1Network() {
+        if (!this.isConnected) {
+          showNotification('Not Connected', 'Please connect to Nothing L1 Network first', 'warning');
+          return;
+        }
+        
+        // Open explorer in new tab (would be replaced with actual explorer URL)
+        window.open('https://explorer.nothing-l1.example.com', '_blank');
+      }
+      
+      // Create validator dialog following Avalanche L1 guidelines
+      createValidator() {
+        // Modified check to allow validator creation
+        // This makes sure users can create validators on the Nothing L1 tab
+        if (!window.ethereum) {
+          showNotification('Wallet Required', 'Please connect your wallet first to create a validator', 'warning');
+          return;
+        }
+        
+        // Following Avalanche documentation guidelines for validator requirements
+        const minStake = this.networkData.minStake || 2000;
+        const validatorId = `NodeID-${this.wallet.address.substring(2, 10)}`;
+        
+        // Create validator information UI
+        const validatorInfo = `
+        <div style="text-align: left; margin-bottom: 15px;">
+          <p><strong>Validator Node ID:</strong> ${validatorId}</p>
+          <p><strong>Minimum Stake Required:</strong> ${minStake.toLocaleString()} NTH</p>
+          <p><strong>Validation Period:</strong> 14 days to 1 year</p>
+          <p><strong>Delegation Fee:</strong> 2%</p>
+        </div>
+        `;
+        
+        // Display confirmation with more detailed information
+        const confirmStake = confirm(`To create a validator on Nothing L1:\n\n` +
+          `• Node ID: ${validatorId}\n` +
+          `• Minimum Stake: ${minStake.toLocaleString()} NTH\n` + 
+          `• Required Uptime: 80%\n` +
+          `• Delegation Fee: 2%\n\n` +
+          `Proceed with validator creation?`);
+        
+        if (confirmStake) {
+          // Check if user has enough tokens
+          if (this.token.balance < minStake) {
+            showNotification('Insufficient Balance', `You need at least ${minStake.toLocaleString()} NTH tokens to create a validator`, 'error');
+            return;
+          }
+          
+          // Simulate the validator creation process
+          this.simulateValidatorCreation();
+        }
+      }
+      
+      // Simulate validator creation process
+      simulateValidatorCreation() {
+        // Update status to indicate we're setting up the validator
+        this.statusDot.className = 'status-dot connecting';
+        this.statusText.textContent = 'Creating validator...';
+        
+        // Show progress notification
+        showNotification('Creating Validator', 'Setting up your validator node on the Nothing L1 Network...', 'info');
+        
+        // Simulate the validator setup process with a timer to make it feel more realistic
+        setTimeout(() => {
+          // Generate node ID based on user's wallet address (this would be done through the CLI in reality)
+          const nodeId = `NodeID-${this.wallet.address.substring(2, 10)}`;
+          
+          // Update validator information
+          this.isValidator = true;
+          this.validatorStartTime = Date.now();
+          this.validatorNodeId = nodeId;
+          
+          // Update network stats - add a validator
+          this.networkData.validators++;
+          
+          // Set initial stake amount
+          const stakeAmount = this.networkData.minStake || 2000;
+          this.validatorStake.textContent = `${stakeAmount.toLocaleString()} NTH`;
+          
+          // Update UI
+          this.updateNetworkInfo();
+          
+          // Show success message with detailed information about the validator
+          showNotification(
+            'Validator Created', 
+            `Your validator node (${nodeId}) is now active on the Nothing L1 Network with ${stakeAmount.toLocaleString()} NTH staked. Current validator count: ${this.networkData.validators}`,
+            'success'
+          );
+        }, 3000); // 3 second delay to simulate processing
+      }
+      
+      // Run validator node following Avalanche guidelines
+      runValidator() {
+        // Modified check to allow running a validator node
+        // This makes sure users can run validators on the Nothing L1 tab
+        if (!window.ethereum) {
+          showNotification('Wallet Required', 'Please connect your wallet first to run a validator', 'warning');
+          return;
+        }
+        
+        // In reality, this would involve running the avalanchego binary with a config file
+        // For the demo, we'll show a simulated process
+        
+        const configDialog = `
+        <div style="text-align: left;">
+          <p><strong>Avalanche Node Configuration</strong></p>
+          <pre>
+{
+  "network-id": "1000",
+  "http-host": "0.0.0.0",
+  "http-port": "9650",
+  "staking-port": "9651",
+  "db-dir": "db/nothing-l1",
+  "bootstrap-ips": "api.nothing-l1.example.com:9651",
+  "bootstrap-ids": "NodeID-7Xhw2mDxuDS44j42TCB6U5579esbSt3Lg",
+  "plugin-dir": "plugins",
+  "log-level": "info",
+  "chain-config-dir": "chains"
+}
+          </pre>
+          <p>Start validator node with this configuration?</p>
+        </div>
+        `;
+        
+        // Display a more technical confirmation
+        const confirmRun = confirm(`Ready to run Nothing L1 validator node with the following config:\n\n` +
+          `• Network ID: 1000\n` +
+          `• Staking Port: 9651\n` + 
+          `• Bootstrap Node: api.nothing-l1.example.com\n\n` +
+          `Proceed with starting validator?`);
+        
+        if (confirmRun) {
+          // Show progress notification
+          showNotification('Starting Validator', 'Initializing your validator node... This may take a moment.', 'info');
+          
+          // Update status
+          this.statusDot.className = 'status-dot connecting';
+          this.statusText.textContent = 'Starting validator...';
+          
+          // Simulate the process of starting a validator node
+          setTimeout(() => {
+            // Set validator status
+            this.isValidator = true;
+            this.validatorStartTime = Date.now();
+            
+            // Update UI
+            this.updateNetworkInfo();
+            
+            // Show success message with the technical details
+            showNotification(
+              'Validator Running', 
+              'Your validator node is now running on the Nothing L1 Network. Terminal output: avalanchego v1.10.0 started successfully.',
+              'success'
+            );
+          }, 2500);
+        }
+      }
+      
+      // Manage validator settings following Avalanche L1 guidelines
+      manageValidator() {
+        if (!this.isConnected || !this.isValidator) {
+          showNotification('Not a Validator', 'You are not running a validator node', 'warning');
+          return;
+        }
+        
+        // Create a more advanced validator management UI following Avalanche docs
+        const nodeId = this.validatorNodeId.textContent || `NodeID-${this.wallet.address.substring(2, 10)}`;
+        const currentStake = parseFloat(this.validatorStake.textContent.replace(/[^0-9.]/g, '')) || 2000;
+        const rewards = parseFloat(this.validatorRewards.textContent) || 1254.32;
+        
+        // Show validator management options with Avalanche-specific terminology
+        const actions = [
+          "1. Add delegation (increase stake)",
+          "2. Collect validation rewards",
+          "3. View validator performance",
+          "4. Edit delegation fee",
+          "5. Stop validator (end validation period)"
+        ];
+        
+        const action = prompt(`Avalanche Nothing L1 Validator Management\nNode ID: ${nodeId}\nCurrent Stake: ${currentStake.toLocaleString()} NTH\nPending Rewards: ${rewards.toFixed(2)} NTH\n\n${actions.join('\n')}\n\nEnter option number:`);
+        
+        switch (action) {
+          case '1':
+            // Add delegation using Avalanche terminology
+            const addAmount = parseFloat(prompt('Enter amount of NTH to add to validator stake (min 1000 NTH):'));
+            if (addAmount && addAmount >= 1000) {
+              // Show technical command that would be run
+              const command = `avalanche stake add --amount ${addAmount} --node-id ${nodeId} --network-id 1000`;
+              console.log('Executing command:', command);
+              
+              // Simulate successful staking
+              const newStake = currentStake + addAmount;
+              this.validatorStake.textContent = `${newStake.toLocaleString()} NTH`;
+              
+              showNotification(
+                'Delegation Added', 
+                `Added ${addAmount.toLocaleString()} NTH to your validator stake. New total: ${newStake.toLocaleString()} NTH.`, 
+                'success'
+              );
+            } else if (addAmount && addAmount < 1000) {
+              showNotification(
+                'Invalid Amount', 
+                'Minimum delegation amount is 1000 NTH following Avalanche protocol rules.', 
+                'error'
+              );
+            }
+            break;
+            
+          case '2':
+            // Withdraw rewards with confirmation and technical details
+            if (confirm(`Ready to collect ${rewards.toFixed(2)} NTH validation rewards to address ${this.wallet.address}?`)) {
+              // Show technical command that would be run
+              const command = `avalanche rewards collect --node-id ${nodeId} --to-address ${this.wallet.address}`;
+              console.log('Executing command:', command);
+              
+              // Update rewards display
+              this.validatorRewards.textContent = '0.00 NTH';
+              
+              showNotification(
+                'Rewards Collected', 
+                `${rewards.toFixed(2)} NTH validation rewards have been transferred to your wallet.`, 
+                'success'
+              );
+            }
+            break;
+            
+          case '3':
+            // Display validator performance metrics
+            const uptime = this.validatorUptime.textContent || '1d 2h';
+            const networkUptime = '99.8%';
+            const validatedBlocks = Math.floor(Math.random() * 10000) + 15000;
+            
+            alert(`Validator Performance Metrics\n\nNode ID: ${nodeId}\nUptime: ${uptime}\nNetwork Uptime: ${networkUptime}\nValidated Blocks: ${validatedBlocks.toLocaleString()}\nDelegation Fee: 2%\nValidation Ends: ${new Date(Date.now() + 86400000 * 30).toLocaleDateString()}`);
+            break;
+            
+          case '4':
+            // Edit delegation fee with Avalanche constraints
+            const currentFee = 2;
+            const newFee = parseFloat(prompt(`Current delegation fee: ${currentFee}%\nEnter new delegation fee (2-100%):`));
+            
+            if (newFee && newFee >= 2 && newFee <= 100) {
+              // Show technical command that would be run
+              const command = `avalanche validator set-delegation-fee --node-id ${nodeId} --fee-percent ${newFee}`;
+              console.log('Executing command:', command);
+              
+              showNotification(
+                'Delegation Fee Updated', 
+                `Your validator delegation fee has been updated from ${currentFee}% to ${newFee}%.`, 
+                'success'
+              );
+            } else if (newFee) {
+              showNotification(
+                'Invalid Fee', 
+                'Delegation fee must be between 2% and 100% following Avalanche protocol rules.', 
+                'error'
+              );
+            }
+            break;
+            
+          case '5':
+            // Stop validator with detailed warning about unbonding period
+            if (confirm('IMPORTANT: Are you sure you want to stop your validator?\n\n• This will end your validation period\n• Your staked funds will enter a 14-day unbonding period\n• You will no longer earn validation rewards\n• Your node will be removed from the active validator set\n\nProceed with stopping validator?')) {
+              // Show technical command that would be run
+              const command = `avalanche validator stop --node-id ${nodeId}`;
+              console.log('Executing command:', command);
+              
+              // Update validator status
+              this.isValidator = false;
+              this.validatorStartTime = null;
+              this.updateNetworkInfo();
+              
+              // Update network data
+              this.networkData.validators--;
+              
+              showNotification(
+                'Validator Stopped', 
+                `Your validator node has been stopped. Staked funds will be returned after the 14-day unbonding period.`, 
+                'info'
+              );
+            }
+            break;
+            
+          default:
+            // Cancel or invalid input
+            break;
+        }
+      }
+      
+      // Simulate network updates for demo purposes
+      simulateNetworkUpdates() {
+        if (!this.isConnected) return;
+        
+        // Clear any existing interval
+        if (this.updateInterval) {
+          clearInterval(this.updateInterval);
+        }
+        
+        // Set interval to update network data
+        this.updateInterval = setInterval(() => {
+          // Increase block height by random amount (1-5)
+          this.networkData.blockHeight += Math.floor(Math.random() * 5) + 1;
+          
+          // Fluctuate TPS slightly
+          const tpsChange = Math.floor(Math.random() * 30) - 15; // -15 to +15
+          this.networkData.tps = Math.max(500, Math.min(800, this.networkData.tps + tpsChange));
+          
+          // Occasionally change validator count
+          if (Math.random() < 0.05) { // 5% chance
+            const validatorChange = Math.random() < 0.7 ? 1 : -1; // 70% chance to increase
+            this.networkData.validators = Math.max(5, this.networkData.validators + validatorChange);
+          }
+          
+          // Update UI with new data
+          this.blockHeight.textContent = this.networkData.blockHeight.toLocaleString();
+          this.validators.textContent = this.networkData.validators;
+          this.tps.textContent = this.networkData.tps;
+          
+          // Update validator rewards if user is a validator
+          if (this.isValidator) {
+            const currentRewards = parseFloat(this.validatorRewards.textContent);
+            const newRewards = currentRewards + (Math.random() * 0.05); // Add 0-0.05 tokens per update
+            this.validatorRewards.textContent = newRewards.toFixed(2) + ' NTH';
+            
+            // Update uptime
+            const uptimeMs = Date.now() - this.validatorStartTime;
+            const hours = Math.floor(uptimeMs / (1000 * 60 * 60));
+            const days = Math.floor(hours / 24);
+            const uptime = days > 0 ? `${days}d ${hours % 24}h` : `${hours}h ${Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60))}m`;
+            this.validatorUptime.textContent = uptime;
+          }
+        }, 3000); // Update every 3 seconds
+      }
+    }
+    
+    // Initialize Nothing L1 Network Manager
+    const nothingL1Manager = new NothingL1Manager();
+    
+    // Remove complex tab management to simplify and fix the functionality
+    
+    // Add direct wallet event listeners to make sure wallet functionality works
+    document.getElementById('connect-wallet-btn').addEventListener('click', () => {
+      if (window.ethereum) {
+        window.ethereum.request({ method: 'eth_requestAccounts' })
+          .then(accounts => {
+            if (accounts.length > 0) {
+              showNotification('Wallet Connected', 'Successfully connected to wallet.', 'success');
+              document.getElementById('l1-network-tab-btn').disabled = false;
+            }
+          })
+          .catch(error => {
+            console.error('Error connecting wallet:', error);
+            showNotification('Connection Failed', 'Could not connect to wallet.', 'error');
+          });
+      } else {
+        showNotification('Wallet Not Found', 'No Ethereum wallet detected.', 'error');
+      }
+    });
+    
+    // Make sure the L1 tab is actually accessible
+    document.getElementById('l1-network-tab-btn').addEventListener('click', function() {
+      // Hide all other tabs first
+      const allTabs = document.querySelectorAll('.tab-content');
+      allTabs.forEach(tab => tab.style.display = 'none');
+      
+      // Show only the L1 Network tab
+      document.getElementById('l1-network-tab').style.display = 'block';
+      
+      // Update tab button states
+      const allTabBtns = document.querySelectorAll('.tab');
+      allTabBtns.forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+    });
+    function setupTabNavigation() {
+      document.getElementById('network-tab-btn').addEventListener('click', () => {
+        hideAllTabs();
+        document.getElementById('network-tab').style.display = 'block';
+        setActiveTab('network-tab-btn');
+      });
+      
+      document.getElementById('exchange-tab-btn').addEventListener('click', () => {
+        hideAllTabs();
+        document.getElementById('exchange-tab').style.display = 'block';
+        setActiveTab('exchange-tab-btn');
+      });
+      
+      document.getElementById('burn-tab-btn').addEventListener('click', () => {
+        hideAllTabs();
+        document.getElementById('burn-tab').style.display = 'block';
+        setActiveTab('burn-tab-btn');
+      });
+      
+      document.getElementById('stake-tab-btn').addEventListener('click', () => {
+        hideAllTabs();
+        document.getElementById('stake-tab').style.display = 'block';
+        setActiveTab('stake-tab-btn');
+      });
+      
+      document.getElementById('l1-network-tab-btn').addEventListener('click', () => {
+        hideAllTabs();
+        document.getElementById('l1-network-tab').style.display = 'block';
+        setActiveTab('l1-network-tab-btn');
+        
+        // Reset connection status and ensure it doesn't show as connected
+        nothingL1Manager.isConnected = false;
+        nothingL1Manager.isValidator = false;
+        nothingL1Manager.updateNetworkInfo();
+      });
+    }
+    
+    // Hide all tabs
+    function hideAllTabs() {
+      document.getElementById('network-tab').style.display = 'none';
+      document.getElementById('exchange-tab').style.display = 'none';
+      document.getElementById('burn-tab').style.display = 'none';
+      document.getElementById('stake-tab').style.display = 'none';
+      document.getElementById('l1-network-tab').style.display = 'none';
+    }
+    
+    // Set active tab
+    function setActiveTab(tabId) {
+      document.getElementById('network-tab-btn').classList.remove('active');
+      document.getElementById('exchange-tab-btn').classList.remove('active');
+      document.getElementById('burn-tab-btn').classList.remove('active');
+      document.getElementById('stake-tab-btn').classList.remove('active');
+      document.getElementById('l1-network-tab-btn').classList.remove('active');
+      
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // Ethereum window mock for testing
+    if (typeof window.ethereum === 'undefined') {
+      window.ethereum = {
+        isMetaMask: true,
+        request: async (params) => {
+          if (params.method === 'eth_requestAccounts') {
+            return ['0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('')];
+          } else if (params.method === 'eth_chainId') {
+            return '0xa86a'; // Avalanche C-Chain
+          } else if (params.method === 'eth_getBalance') {
+            return '0x' + (Math.floor(Math.random() * 10 * 1e18)).toString(16);
+          }
+          return null;
+        }
+      };
+    }
+  </script>
+</body>
+</html>
